@@ -1,0 +1,19 @@
+{
+  "name": "spv-channels-tests",
+  "version": "1.0.0",
+  "description": "Functional tests for SPV Channels.",
+  "scripts": {
+    "build": "tsc",
+    "example-web": "http-server ./examples/web/www",
+    "example-node": "node ./examples/node/build/demo.js",
+    "build-tests": "tsc -p ./tests/tsconfig.json"
+  },
+  "dependencies": {
+    "@types/node": "^14.0.20",
+    "axios": "^0.19.2",
+    "websocket": "^1.0.31"
+  },
+  "devDependencies": {
+    "typescript": "^3.9.6"
+  }
+}

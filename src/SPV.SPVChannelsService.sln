@@ -1,0 +1,57 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29709.97
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{B1ADCD23-8251-4988-9C74-A0C022A8BAEF}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{E27F9873-1ED0-4504-9047-9FDAA9A1EB1F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "SPVChannels", "SPVChannels", "{AEE897BA-57B9-4DE3-8BC3-6B471CAB208F}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SPVChannels.API.Rest", "Services\SPVChannels\SPVChannels.API.Rest\SPVChannels.API.Rest.csproj", "{3A9AB2A0-DE2A-4425-A5AD-878D6060323E}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SPVChannels.Domain", "Services\SPVChannels\SPVChannels.Domain\SPVChannels.Domain.csproj", "{18D8A838-E902-4C03-AA06-9158494581C8}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SPVChannels.Infrastructure", "Services\SPVChannels\SPVChannels.Infrastructure\SPVChannels.Infrastructure.csproj", "{348D8FB8-5751-44B8-91CE-AA721827CE34}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SPVChannels.Test.Functional", "Services\SPVChannels\SPVChannels.Test.Functional\SPVChannels.Test.Functional.csproj", "{8100E58E-9B3E-40B4-AA7A-6231A06501F7}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{3A9AB2A0-DE2A-4425-A5AD-878D6060323E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{3A9AB2A0-DE2A-4425-A5AD-878D6060323E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{3A9AB2A0-DE2A-4425-A5AD-878D6060323E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{3A9AB2A0-DE2A-4425-A5AD-878D6060323E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{18D8A838-E902-4C03-AA06-9158494581C8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{18D8A838-E902-4C03-AA06-9158494581C8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{18D8A838-E902-4C03-AA06-9158494581C8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{18D8A838-E902-4C03-AA06-9158494581C8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{348D8FB8-5751-44B8-91CE-AA721827CE34}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{348D8FB8-5751-44B8-91CE-AA721827CE34}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{348D8FB8-5751-44B8-91CE-AA721827CE34}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{348D8FB8-5751-44B8-91CE-AA721827CE34}.Release|Any CPU.Build.0 = Release|Any CPU
+		{8100E58E-9B3E-40B4-AA7A-6231A06501F7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8100E58E-9B3E-40B4-AA7A-6231A06501F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8100E58E-9B3E-40B4-AA7A-6231A06501F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8100E58E-9B3E-40B4-AA7A-6231A06501F7}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{E27F9873-1ED0-4504-9047-9FDAA9A1EB1F} = {B1ADCD23-8251-4988-9C74-A0C022A8BAEF}
+		{AEE897BA-57B9-4DE3-8BC3-6B471CAB208F} = {E27F9873-1ED0-4504-9047-9FDAA9A1EB1F}
+		{3A9AB2A0-DE2A-4425-A5AD-878D6060323E} = {AEE897BA-57B9-4DE3-8BC3-6B471CAB208F}
+		{18D8A838-E902-4C03-AA06-9158494581C8} = {AEE897BA-57B9-4DE3-8BC3-6B471CAB208F}
+		{348D8FB8-5751-44B8-91CE-AA721827CE34} = {AEE897BA-57B9-4DE3-8BC3-6B471CAB208F}
+		{8100E58E-9B3E-40B4-AA7A-6231A06501F7} = {AEE897BA-57B9-4DE3-8BC3-6B471CAB208F}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {935D3D90-B7B2-4D16-B66C-684358285AA3}
+	EndGlobalSection
+EndGlobal
