@@ -34,7 +34,7 @@ For running in production environment, you should use Docker.
      
 5. Create config folder and save SSL server certificate file (<certificate_file_name>.pfx) into to the config folder. This server certificate is required to setup TLS (SSL).
 
-6.	Before running the SPV Channels API Server containers (spvchannels-db and spvchannels-api), you must configure or replace some values in the `.env` file.
+6.	Before running the SPV Channels API Server containers (spvchannels-db and spvchannels), you must configure or replace some values in the `.env` file.
 
 | Parameter | Description |
 | --------- | ----------- |
@@ -43,7 +43,7 @@ For running in production environment, you should use Docker.
    > **Note:** The remaining setting are explaned in section [Settings](#Settings).
 
 ## Running application
-1. After everything is set up and configured correctly, you can launch the spvchannels-db and spvchannels-api containers using the following command.
+1. After everything is set up and configured correctly, you can launch the spvchannels-db and spvchannels containers using the following command.
 
     ```
     docker-compose up –d
@@ -65,7 +65,7 @@ The docker images are automatically pulled from Docker Hub.
 To be able to call SPV Channels Server API, an account must be added into database using the following command.
 
     ```
-    docker exec spvchannels-api ./SPVChannels.API.Rest -createaccount [accountname] [username] [password]
+    docker exec spvchannels ./SPVChannels.API.Rest -createaccount [accountname] [username] [password]
     ```
 
 Parameter description:
@@ -76,7 +76,7 @@ Parameter description:
 | [username] | username of the account |
 | [password] | password of the username |
 
-   > **Note:** This command can also be used to add new users to an existing account (e.g. running `docker exec spvchannels-api ./SPVChannels.API.Rest -createaccount Accountname User1 OtherP@ssword` will return account-id of Accountname).
+   > **Note:** This command can also be used to add new users to an existing account (e.g. running `docker exec spvchannels ./SPVChannels.API.Rest -createaccount Accountname User1 OtherP@ssword` will return account-id of Accountname).
 
 ## REST interface
 

@@ -13,7 +13,7 @@ services:
       - spvchannels-network
 
   spvchannels-api:
-    container_name: spvchannels-api
+    container_name: spvchannels
     image: bitcoinsv/spvchannels:{{VERSION}}
     command: -startup
     ports:
