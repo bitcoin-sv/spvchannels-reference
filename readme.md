@@ -1,7 +1,7 @@
 # SPV Channels CE
 
 This repository contains SPV Channels Community Edition, which implements BRFC specification for SPV channels.
-In addition do server side implementation,  it also contains JavaScript client libraries for interacting with the server. See [Client libraries readme](client/javascript/readme.md) for more details about client side libraries. 
+In addition do server side implementation, it also contains JavaScript client libraries for interacting with the server. See [Client libraries readme](client/javascript/readme.md) for more details about client side libraries. 
 
 SPV Channels provides a mechanism via which counterparties can communicate in a secure manner even in instances where one of the parties is temporarily offline.
 
@@ -14,38 +14,27 @@ API Clients must trust the Certification Authority (CA) that issued server side 
 
 ## Initial setup
 
-For running in production environment, you should should use Docker.
+For running in production environment, you should use Docker.
 
 1.	Open the terminal.
 
-2. Create a directory where the spv docker images, config and database will be stored (e.g. spvchannels) and navigate to it.
+2. Create a directory where the spvchannels docker images, config and database will be stored (e.g. spvchannels) and navigate to it.
 
     ```
     mkdir spvchannels
     cd spvchannels
     ```    
    
-3. Download the distribution of SPV Channels Server into directory, created in the previous step and extract the content using the following command.
- 
-    ```
-    unzip spvchannels.zip && rm spvchannels.zip
-    ```
+3. Download the distribution of SPV Channels Server into directory, created in the previous step and extract the contents.
 
 4.	Check that the following files are present:
-     - `install.sh`
-     - `uninstall.sh`
+
      - `docker-compose.yml`
      - `.env`
      
-5. Next run the `install.sh` script. This script will load images `spvchannelsapi.tar` and `spvchannelsdata.tar` to docker and create a `config` folder, which will be required in the next step.
-    
-    ```
-    bash install.sh
-    ```
+5. Create config folder and save SSL server certificate file (<certificate_file_name>.pfx) into to the config folder. This server certificate is required to setup TLS (SSL).
 
-6.	Save SSL server certificate file  (*.pfx) into to the `config` folder. This server certificate is required to setup TLS (SSL).
-
-7.	Before running the SPV Channels API Server containers (spvchannels-db and spvchannels-api), you must configure or replace some values in the `.env` file.
+6.	Before running the SPV Channels API Server containers (spvchannels-db and spvchannels-api), you must configure or replace some values in the `.env` file.
 
 | Parameter | Description |
 | --------- | ----------- |
@@ -68,9 +57,9 @@ The docker images are automatically pulled from Docker Hub.
     docker ps
     ```
    
-10. If everything is running you can continue to section [Account manager](#Account-manager:) to create an account.
+3. If everything is running you can continue to section [Account manager](#Account-manager:) to create an account.
 
-> **Note:** If you where provided whit an account id and its credentials then you can skip Setting up an account and proceed to [REST interface](#REST-interface)
+> **Note:** If you were provided whit an account id and its credentials then you can skip Setting up an account and proceed to [REST interface](#REST-interface)
 
 ## Setting up an account
 To be able to call SPV Channels Server API, an account must be added into database using the following command.
@@ -127,25 +116,3 @@ This interfaces can be accessed on `https://<servername>:<port>/api/v1`. Swagger
     ```
     docker-compose down
     ```
-   
-   > **Note:** If you didn't execute step 8. in **Running application**, you can skip this step and proceed to the next step.
-
-## Removing application
-
-1. In this step you will remove the bitcoinsv/spvchannels-db:version and bitcoinsv/spvchannels::version images from docker with the script `uninstall.sh` and remove the `config` folder (including its content). 
-
-    ```
-    bash uninstall.sh [version]
-    ```
-   > **Note:** If you didn't execute step 5. in **Running application**, you can skip this step and proceed to the next step.    
-   > **Note:** The `version` parameter is mandatory.
-
-2. In the last step you will remove all the SPV Channels Server data by navigating one level up the folder hierarchy and removing the spvchannels folder (including its content) with the next commands (also you will be asked to enter the password). 
-
-    ```
-    cd ..
-    sudo rm -rf spvchannels
-    ```
-   
-   > **Note:** After executing step 4. all the SPV Channels Server data will be lost and can not be recovered!
-
