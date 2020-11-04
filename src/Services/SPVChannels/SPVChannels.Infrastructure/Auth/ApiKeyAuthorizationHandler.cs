@@ -44,8 +44,8 @@ namespace SPVChannels.Infrastructure.Auth
         context.Fail();
         return Task.FromResult(AuthorizationFailure.Failed(new ApiKeyRequirement[] { }));
       }
-
-      if (!long.TryParse(channelid.ToString(), out long cid) || token.Channel != cid)
+            
+      if (!authRepository.IsAuthorizedToAPITokenCacheAsync(channelid.ToString(), token.Id).Result)
       {
         logger.LogWarning($"Channel Id({channelid}) isn't authorized to access token Id({token.Id}).");
 

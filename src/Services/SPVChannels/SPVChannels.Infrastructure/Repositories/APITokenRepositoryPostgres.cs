@@ -67,14 +67,19 @@ namespace SPVChannels.Infrastructure.Repositories
       return apiTokens;
     }
 
-    public IEnumerable<APIToken> GetAPITokens(long channelid, string token = null)
+    public IEnumerable<APIToken> GetAPITokens(string channelExternalId, string token = null)
     {
       using var connection = GetNpgsqlConnection();
       connection.Open();
 
-      string selectAPITokens = "SELECT * FROM APIToken WHERE channel = @channelid and (validto IS NULL OR validto >= @validto) and (@token IS NULL or token = @token);";
+      string selectAPITokens =
+        "SELECT APIToken.* " +
+        "FROM APIToken " +
+        "INNER JOIN Channel ON APIToken.channel = Channel.id " +
+        "WHERE Channel.externalid = @channelExternalId " +
+        "  AND (APIToken.validto IS NULL OR APIToken.validto >= @validto) and (@token IS NULL or APIToken.token = @token);";
 
-      var apiTokens = connection.Query<APIToken>(selectAPITokens, param: new { channelid, validto = DateTime.UtcNow, token });
+      var apiTokens = connection.Query<APIToken>(selectAPITokens, param: new { channelExternalId, validto = DateTime.UtcNow, token });
       
       return apiTokens;
     }
@@ -102,6 +107,7 @@ namespace SPVChannels.Infrastructure.Repositories
       {
         cache.Remove(apiTokens.Token);
         cache.Remove($"{ apiTokens.Account }_{ apiTokens.Channel }_{ apiTokens.Id }");
+        cache.Remove($"{ apiTokens.Channel }_{ apiTokens.Id }");
       }
 
       return revokeAPITokenResult > 0;

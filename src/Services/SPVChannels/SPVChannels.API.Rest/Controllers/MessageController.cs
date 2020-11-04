@@ -66,15 +66,9 @@ namespace SPVChannels.API.Rest.Controllers
     {
       logger.LogInformation($"Head called for channel(id): {channelid}.");
 
-      if (!long.TryParse(channelid, out long id))
-      {
-        var error = SPVChannelsHTTPError.NotFound;
-        return NotFound(ProblemDetailsFactory.CreateProblemDetails(HttpContext, error.Code, error.Description));
-      }
+      string maxSequence = messageRepository.GetMaxSequence(HttpContext.User.Identity.Name, channelid);
 
-      string maxSequence = messageRepository.GetMaxSequence(HttpContext.User.Identity.Name, id);
-
-      logger.LogInformation($"Head message sequence of channel {id} is {maxSequence}.");
+      logger.LogInformation($"Head message sequence of channel {channelid} is {maxSequence}.");
 
       Response.Headers.Add("Access-Control-Expose-Headers", "authorization,etag");
       Response.Headers.Add("ETag", maxSequence);
@@ -92,12 +86,6 @@ namespace SPVChannels.API.Rest.Controllers
     {
       logger.LogInformation($"Write message to channel(id) {channelid}.");
 
-      if (!long.TryParse(channelid, out long id))
-      {
-        var error = SPVChannelsHTTPError.NotFound;
-        return NotFound(ProblemDetailsFactory.CreateProblemDetails(HttpContext, error.Code, error.Description));
-      }
-
       // Check that we have content type
       if (Request.ContentType == null || Request.ContentType == "")
       {
@@ -114,7 +102,7 @@ namespace SPVChannels.API.Rest.Controllers
       // If we got content length header than validate that it is not over message length limit
       if (contentLength > configuration.MaxMessageContentLength)
       {
-        logger.LogWarning($"Payload to large to write message to channel {id} (payload size: {contentLength} bytes, max allowed size: {configuration.MaxMessageContentLength} bytes).");
+        logger.LogWarning($"Payload to large to write message to channel {channelid} (payload size: {contentLength} bytes, max allowed size: {configuration.MaxMessageContentLength} bytes).");
 
         return BadRequest(ProblemDetailsFactory.CreateProblemDetails(HttpContext, 
           (int)HttpStatusCode.RequestEntityTooLarge, 
@@ -122,8 +110,7 @@ namespace SPVChannels.API.Rest.Controllers
       }
 
       // Retrieve channel data
-      Channel channel = channelRepository.GetChannelById(id);
-
+      Channel channel = channelRepository.GetChannelByExternalId(channelid);
 
       byte[] content;
       // Read message content
@@ -178,7 +165,7 @@ namespace SPVChannels.API.Rest.Controllers
 
       if (errorCode > 0)
       {
-        logger.LogWarning($"Error writing message to channel {id}: {errorCode} - {errorMessage}.");
+        logger.LogWarning($"Error writing message to channel {channelid}: {errorCode} - {errorMessage}.");
         return BadRequest(ProblemDetailsFactory.CreateProblemDetails(HttpContext, errorCode, errorMessage));
       }
 
@@ -188,7 +175,7 @@ namespace SPVChannels.API.Rest.Controllers
       // Send push notification
       NotificationViewModel notification = new NotificationViewModel
       {
-        Channel = channel.Id.ToString(),
+        Channel = channel.ExternalId,
         Received = message.ReceivedTS,
         Notification = configuration.NotificationTextNewMessage
       };
@@ -202,7 +189,7 @@ namespace SPVChannels.API.Rest.Controllers
 
     // GET: /api/v1/channel/<channel-id>[?unread=true]
     /// <summary>
-    /// Get list of messages from channel. By default only unread messages are returned.
+    /// Get list of messages from channel.
     /// </summary>
     /// <param name="channelid">Id of selected channel</param>
     /// <param name="unread">Optional filter for unread / all messages</param>
@@ -212,11 +199,6 @@ namespace SPVChannels.API.Rest.Controllers
     {
       var error = SPVChannelsHTTPError.NotFound;
       logger.LogInformation($"Get messages for channel(id):{channelid}.");
-
-      if (!long.TryParse(channelid, out long id))
-      {
-        return NotFound(ProblemDetailsFactory.CreateProblemDetails(HttpContext, error.Code, error.Description));
-      }
 
       // Retrieve token information from identity
       APIToken apiToken = await authRepository.GetAPITokenAsync(HttpContext.User.Identity.Name);
@@ -248,12 +230,6 @@ namespace SPVChannels.API.Rest.Controllers
     {
       logger.LogInformation($"Flag message {sequence} from {channelid} as {(data.Read ? "read" : "unread")}.");
 
-      if (!long.TryParse(channelid, out long id))
-      {
-        var error = SPVChannelsHTTPError.NotFound;
-        return NotFound(ProblemDetailsFactory.CreateProblemDetails(HttpContext, error.Code, error.Description));
-      }
-
       // Retrieve token information from identity
       APIToken apiToken = await authRepository.GetAPITokenAsync(HttpContext.User.Identity.Name);
 
@@ -267,7 +243,7 @@ namespace SPVChannels.API.Rest.Controllers
       }
 
       // Mark messages
-      messageRepository.MarkMessages(id, apiToken.Id, sequence, older ?? false, data.Read);
+      messageRepository.MarkMessages(channelid, apiToken.Id, sequence, older ?? false, data.Read);
 
       logger.LogInformation($"Message {sequence} was flagged as {(data.Read ? "read" : "unread")}.");
 
@@ -288,15 +264,14 @@ namespace SPVChannels.API.Rest.Controllers
       Message message;
       SPVChannelsHTTPError error;
 
-      if (!long.TryParse(channelid, out long chId) ||
-          !long.TryParse(sequence, out long seq) ||
-          (message = messageRepository.GetMessageMetaData(chId, seq)) == null)
+      if (!long.TryParse(sequence, out long seq) ||
+          (message = messageRepository.GetMessageMetaData(channelid, seq)) == null)
       {
         error = SPVChannelsHTTPError.NotFound;
         return NotFound(ProblemDetailsFactory.CreateProblemDetails(HttpContext, error.Code, error.Description));
       }
      
-      var channel = channelRepository.GetChannelById(chId);
+      var channel = channelRepository.GetChannelByExternalId(channelid);
 
       if (channel.MinAgeDays.HasValue &&
           message.ReceivedTS.AddDays(channel.MinAgeDays.Value).Date.CompareTo(DateTime.UtcNow) > 0)

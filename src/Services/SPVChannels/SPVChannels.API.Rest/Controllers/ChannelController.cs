@@ -50,7 +50,7 @@ namespace SPVChannels.API.Rest.Controllers
 
       logger.LogInformation($"Returning {channelList.Count()} channels for account(id): {id}.");
 
-      return Ok(new ChannelViewModelList(channelList.Select(x => new ChannelViewModelGet(x, Url.Link("GetMessages", new { channelid = x.Id })))));
+      return Ok(new ChannelViewModelList(channelList.Select(x => new ChannelViewModelGet(x, Url.Link("GetMessages", new { channelid = x.ExternalId })))));
     }
 
     // GET: /api/account/<account-id>/channel/<channel-id>
@@ -68,23 +68,18 @@ namespace SPVChannels.API.Rest.Controllers
       logger.LogInformation($"Get channel by channel(id) {channelid} for account(id) {accountid}.");
 
       var error = SPVChannelsHTTPError.NotFound;
-      if (!long.TryParse(channelid, out long id))
-      {        
-        return NotFound(ProblemDetailsFactory.CreateProblemDetails(HttpContext, error.Code, error.Description));
-      }
-
-      var channel = channelRepository.GetChannelById(id);
+      var channel = channelRepository.GetChannelByExternalId(channelid);
 
       if (channel == null)
       {
-        logger.LogInformation($"Channel with channelid: {id} does not exist.");
+        logger.LogInformation($"Channel with channelid: {channelid} does not exist.");
 
         return NotFound(ProblemDetailsFactory.CreateProblemDetails(HttpContext, error.Code, error.Description));
       }
 
-      logger.LogInformation($"Returning channel by channelid: {id}.");
+      logger.LogInformation($"Returning channel by channelid: {channelid}.");
 
-      return Ok(new ChannelViewModelGet(channel, Url.Link("GetMessages", new { channelid = channel.Id })));
+      return Ok(new ChannelViewModelGet(channel, Url.Link("GetMessages", new { channelid = channel.ExternalId })));
     }
 
     // POST: /api/v1/account/<accountid>/channel
@@ -113,7 +108,7 @@ namespace SPVChannels.API.Rest.Controllers
 
       var newChannel = channelRepository.CreateChannel(data.ToDomainObject(owner: id));
 
-      var returnResult = new ChannelViewModelGet(newChannel,  Url.Link("GetMessages", new { channelid = newChannel.Id }));
+      var returnResult = new ChannelViewModelGet(newChannel,  Url.Link("GetMessages", new { channelid = newChannel.ExternalId }));
 
       logger.LogInformation($"For accountid {id} was created channel(id): {returnResult.Id}.");
 
@@ -136,17 +131,11 @@ namespace SPVChannels.API.Rest.Controllers
     {
       logger.LogInformation($"Updating channel(id) {channelid} for account(id) {accountid}.");
 
-      if (!long.TryParse(channelid, out long id))
-      {
-        var error = SPVChannelsHTTPError.NotFound;
-        return NotFound(ProblemDetailsFactory.CreateProblemDetails(HttpContext, error.Code, error.Description));
-      }
-
-      var updateChannel = channelRepository.AmendChannel(data.ToDomainObject(id: id));
+      var updateChannel = channelRepository.AmendChannel(data.ToDomainObject(externalId: channelid));
 
       var returnResult = new ChannelViewModelAmend(updateChannel);
 
-      logger.LogInformation($"Channel(id) {id} was updated.");
+      logger.LogInformation($"Channel(id) {channelid} was updated.");
 
       return Ok(returnResult);
     }
@@ -165,13 +154,7 @@ namespace SPVChannels.API.Rest.Controllers
     {
       logger.LogInformation($"Deleting channel(id): {channelid} for account(id): {accountid}.");
 
-      if (!long.TryParse(channelid, out long id))
-      {
-        var error = SPVChannelsHTTPError.NotFound;
-        return NotFound(ProblemDetailsFactory.CreateProblemDetails(HttpContext, error.Code, error.Description));
-      }
-
-      channelRepository.DeleteChannel(id);
+      channelRepository.DeleteChannel(channelid);
 
       logger.LogInformation($"Channel deleted.");
 
@@ -235,12 +218,7 @@ namespace SPVChannels.API.Rest.Controllers
       logger.LogInformation($"Get API tokens by channelid: {channelid} for account(id): {accountid}.");
       var error = SPVChannelsHTTPError.NotFound;
 
-      if (!long.TryParse(channelid, out long id))
-      {        
-        return NotFound(ProblemDetailsFactory.CreateProblemDetails(HttpContext, error.Code, error.Description));
-      }
-
-      var apiTokens = apiTokenRepository.GetAPITokens(id, token);
+      var apiTokens = apiTokenRepository.GetAPITokens(channelid, token);
 
       if (!string.IsNullOrEmpty(token) && !apiTokens.Any())
       {
@@ -267,13 +245,20 @@ namespace SPVChannels.API.Rest.Controllers
     {
       logger.LogInformation($"Generate API Token for accountid: {accountid} and channel: {channelid}.");
 
-      if (!long.TryParse(accountid, out long aid) || !long.TryParse(channelid, out long cid))
+      if (!long.TryParse(accountid, out long aid))
       {
         var error = SPVChannelsHTTPError.NotFound;
         return NotFound(ProblemDetailsFactory.CreateProblemDetails(HttpContext, error.Code, error.Description));
       }
 
-      var newAPIToken = apiTokenRepository.CreateAPIToken(data.ToDomainObject(aid, cid));
+      var channel = channelRepository.GetChannelByExternalId(channelid);
+      if (channel == null)
+      {
+        var error = SPVChannelsHTTPError.NotFound;
+        return NotFound(ProblemDetailsFactory.CreateProblemDetails(HttpContext, error.Code, error.Description));
+      }
+
+      var newAPIToken = apiTokenRepository.CreateAPIToken(data.ToDomainObject(aid, channel.Id));
 
       var returnResult = new APITokenViewModelGet(newAPIToken);
 

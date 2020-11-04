@@ -8,9 +8,11 @@ namespace SPVChannels.Domain.Repositories
 
     Task<long> AuthenticateCacheAsync(string scheme, string credential);
 
-    Task<bool> IsAuthorizedToChannelCacheAsync(long accountId, long channelId);
+    Task<bool> IsAuthorizedToChannelCacheAsync(long accountId, string channelExternalId);
 
-    Task<bool> IsAuthorizedToAPITokenCacheAsync(long accountId, long channelId, long apiToken);
+    Task<bool> IsAuthorizedToAPITokenCacheAsync(long accountId, string channelExternalId, long apiToken);
+
+    Task<bool> IsAuthorizedToAPITokenCacheAsync(string channelExternalId, long apiToken);
 
     Task<APIToken> GetAPITokenAsync(string apiToken);
 

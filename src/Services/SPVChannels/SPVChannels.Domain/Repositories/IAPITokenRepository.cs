@@ -5,7 +5,7 @@ namespace SPVChannels.Domain.Repositories
 {
   public interface IAPITokenRepository
   {
-    IEnumerable<APIToken> GetAPITokens(long channelId, string token = null);
+    IEnumerable<APIToken> GetAPITokens(string channelExternalId, string token = null);
 
     APIToken GetAPITokenById(long apiTokenId);
 
