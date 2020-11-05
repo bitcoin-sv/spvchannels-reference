@@ -21,6 +21,7 @@ CREATE TABLE Channel (
   id            BIGSERIAL          NOT NULL,
   owner         BIGINT             NOT NULL,
 
+  externalid    VARCHAR(1024)      NOT NULL,
   publicread    boolean,
   publicwrite   boolean,
   locked        boolean,
@@ -30,6 +31,7 @@ CREATE TABLE Channel (
   autoprune     boolean,
 
   PRIMARY KEY (id),
+  UNIQUE (externalid),
   FOREIGN KEY (owner) REFERENCES Account (id)
 );
 

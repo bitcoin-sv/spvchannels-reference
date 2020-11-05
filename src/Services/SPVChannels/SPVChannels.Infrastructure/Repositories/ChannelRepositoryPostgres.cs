@@ -55,8 +55,8 @@ namespace SPVChannels.Infrastructure.Repositories
       using NpgsqlTransaction transaction = connection.BeginTransaction();
 
       string insertOrUpdate =
-"INSERT INTO Channel (owner, publicread, publicwrite, locked, sequenced, minagedays, maxagedays, autoprune) " +
-"VALUES(@owner, @publicread, @publicwrite, @locked, @sequenced, @minagedays, @maxagedays, @autoprune) " +
+"INSERT INTO Channel (owner, externalid, publicread, publicwrite, locked, sequenced, minagedays, maxagedays, autoprune) " +
+"VALUES(@owner, @externalid, @publicread, @publicwrite, @locked, @sequenced, @minagedays, @maxagedays, @autoprune) " +
 "RETURNING *;"
 ;
 
@@ -64,6 +64,7 @@ namespace SPVChannels.Infrastructure.Repositories
         new
         {
           owner = channel.Owner,
+          externalid = Channel.CreateExternalId(),
           publicread = channel.PublicRead,
           publicwrite = channel.PublicWrite,
           locked = channel.Locked,
@@ -97,7 +98,7 @@ namespace SPVChannels.Infrastructure.Repositories
       connection.Open();
 
       string selectChannels =
-        "SELECT id, owner, publicread, publicwrite, locked, sequenced, minagedays, maxagedays, autoprune, (select max(seq) FROM Message where Channel.id = Message.channel) AS seq " +
+        "SELECT id, owner, externalid, publicread, publicwrite, locked, sequenced, minagedays, maxagedays, autoprune, (select max(seq) FROM Message where Channel.id = Message.channel) AS seq " +
         "FROM Channel " +
         "WHERE owner = @account;";
       
@@ -112,6 +113,7 @@ namespace SPVChannels.Infrastructure.Repositories
            select new Channel {
              Id = channel.id,
              Owner = channel.owner,
+             ExternalId = channel.externalid,
              PublicRead = channel.publicread,
              PublicWrite = channel.publicwrite,
              Locked = channel.locked,
@@ -143,7 +145,7 @@ namespace SPVChannels.Infrastructure.Repositories
       connection.Open();
       Channel channel = null;
       string selectChannelById =
-"SELECT id, owner, publicread, publicwrite, locked, sequenced, minagedays, maxagedays, autoprune, (select max(seq) FROM Message where Channel.id = Message.channel) AS seq " +
+"SELECT id, owner, externalid, publicread, publicwrite, locked, sequenced, minagedays, maxagedays, autoprune, (select max(seq) FROM Message where Channel.id = Message.channel) AS seq " +
 "FROM Channel " +
 "WHERE Channel.id = @id;";
 
@@ -155,6 +157,7 @@ namespace SPVChannels.Infrastructure.Repositories
         {
           Id = data.id,
           Owner = data.owner,
+          ExternalId = data.externalid,
           PublicRead = data.publicread,
           PublicWrite = data.publicwrite,
           Locked = data.locked,
@@ -176,12 +179,55 @@ namespace SPVChannels.Infrastructure.Repositories
       return channel;
     }
 
-    public void DeleteChannel(long channelId)
+    public Channel GetChannelByExternalId(string externalId)
+    {
+      using var connection = GetNpgsqlConnection();
+      connection.Open();
+      Channel channel = null;
+      string selectChannelById =
+"SELECT id, owner, externalid, publicread, publicwrite, locked, sequenced, minagedays, maxagedays, autoprune, (select max(seq) FROM Message where Channel.id = Message.channel) AS seq " +
+"FROM Channel " +
+"WHERE Channel.externalid = @externalid;";
+
+      var data = connection.Query(selectChannelById, new { externalid = externalId }).FirstOrDefault();
+
+      if (data != null)
+      {
+        channel = new Channel
+        {
+          Id = data.id,
+          Owner = data.owner,
+          ExternalId = data.externalid,
+          PublicRead = data.publicread,
+          PublicWrite = data.publicwrite,
+          Locked = data.locked,
+          Sequenced = data.sequenced,
+          AutoPrune = data.autoprune,
+          MinAgeDays = data.minagedays,
+          MaxAgeDays = data.maxagedays,
+          HeadMessageSequence = data.seq ?? 0
+        };
+
+        string selectAPITokens =
+"SELECT * " +
+"FROM APIToken " +
+"WHERE channel = @channel and (validto IS NULL OR validto >= @validto);";
+
+        channel.APIToken = connection.Query<APIToken>(selectAPITokens, param: new { channel = channel.Id, validto = DateTime.UtcNow }).ToArray();
+
+      }
+      return channel;
+    }
+
+    public void DeleteChannel(string externalId)
     {
       using var connection = GetNpgsqlConnection();
       connection.Open();
 
       using NpgsqlTransaction transaction = connection.BeginTransaction();
+
+      string selectChannelByExternalId = "SELECT id FROM Channel WHERE externalid = @externalid;";
+      var channelId = connection.ExecuteScalar<long?>(selectChannelByExternalId, new { externalid = externalId });
 
       string selectAPITokens = "SELECT * FROM APIToken WHERE channel = @channel;";
 
@@ -202,6 +248,7 @@ namespace SPVChannels.Infrastructure.Repositories
         cache.Remove(apiToken.Token);
         cache.Remove($"{ apiToken.Account }_{ apiToken.Channel }"); 
         cache.Remove($"{ apiToken.Account }_{ apiToken.Channel }_{ apiToken.Id }");
+        cache.Remove($"{ apiToken.Channel }_{ apiToken.Id }");
       }
     }
 
@@ -215,13 +262,13 @@ namespace SPVChannels.Infrastructure.Repositories
       string update =
 "UPDATE Channel " +
 "SET  publicread=@publicread, publicwrite=@publicwrite, locked=@locked " +
-"WHERE id=@id " +
+"WHERE externalid=@externalid " +
 "RETURNING *";
 
       var updateChannelResult = connection.Query<Channel>(update,
         new
         {
-          id = data.Id,
+          externalid = data.ExternalId,
           publicread = data.PublicRead,
           publicwrite = data.PublicWrite,
           locked = data.Locked

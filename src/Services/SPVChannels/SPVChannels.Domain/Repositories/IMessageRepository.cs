@@ -5,7 +5,7 @@ namespace SPVChannels.Domain.Repositories
 {
   public interface IMessageRepository
   {
-    string GetMaxSequence(string apiToken, long channelId);
+    string GetMaxSequence(string apiToken, string channelExternalId);
 
     long GetUnreadMessagesCount(long apiTokenId);
 
@@ -13,13 +13,13 @@ namespace SPVChannels.Domain.Repositories
 
     Message WriteMessage(Message message, out int errorCode, out string errorMessage);
 
-    int MarkMessages(long channelId, long apiTokenId, long sequenceId, bool older, bool isRead);
+    int MarkMessages(string channelExternalId, long apiTokenId, long sequenceId, bool older, bool isRead);
 
     bool SequenceExists(long apiTokenId, long sequenceId);
 
-    Message GetMessage(long channelId, long seq);
+    Message GetMessage(string channelExternalId, long seq);
 
-    Message GetMessageMetaData(long channel, long seq);
+    Message GetMessageMetaData(string channelExternalId, long seq);
 
     bool DeleteMessage(long messageId);
   }

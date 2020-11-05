@@ -37,7 +37,7 @@ namespace SPVChannels.Infrastructure.Auth
       }
 
       var routeData = httpContextAccessor.HttpContext.GetRouteData();
-      long routeAccountId = 0, routeChannelId = 0, routeTokenId;
+      long routeAccountId = 0, routeTokenId;
 
       if (!routeData.Values.TryGetValue("accountid", out object accountid) || !long.TryParse(accountid.ToString(), out routeAccountId))
       {
@@ -56,9 +56,9 @@ namespace SPVChannels.Infrastructure.Auth
         return Task.FromResult(AuthorizationFailure.Failed(new ChannelRequirement[] { }));
       }
 
-      if (routeData.Values.TryGetValue("channelid", out object channelid))
+      if (routeData.Values.TryGetValue("channelid", out object routeChannelId))
       {
-        if (!long.TryParse(channelid.ToString(), out routeChannelId) || !authRepositort.IsAuthorizedToChannelCacheAsync(routeAccountId, routeChannelId).Result)
+        if (!authRepositort.IsAuthorizedToChannelCacheAsync(routeAccountId, routeChannelId.ToString()).Result)
         {
           logger.LogWarning($"Account Id({routeAccountId}) isn't authorized to access channel Id({routeChannelId}).");
           context.Fail();
@@ -66,7 +66,7 @@ namespace SPVChannels.Infrastructure.Auth
         }
         if (routeData.Values.TryGetValue("tokenid", out object tokenid))
         {
-          if (!long.TryParse(tokenid.ToString(), out routeTokenId) || !authRepositort.IsAuthorizedToAPITokenCacheAsync(routeAccountId, routeChannelId, routeTokenId).Result)
+          if (!long.TryParse(tokenid.ToString(), out routeTokenId) || !authRepositort.IsAuthorizedToAPITokenCacheAsync(routeAccountId, routeChannelId.ToString(), routeTokenId).Result)
           {
             logger.LogWarning($"Account Id({routeAccountId}) isn't authorized to access channel Id({routeChannelId}) with token Id({routeTokenId}).");
 

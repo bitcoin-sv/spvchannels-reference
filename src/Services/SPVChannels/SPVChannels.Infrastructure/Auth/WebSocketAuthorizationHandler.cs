@@ -46,7 +46,7 @@ namespace SPVChannels.Infrastructure.Auth
         return Task.FromResult(AuthorizationFailure.Failed(new TokenRequirement[] { }));
       }
 
-      if (!long.TryParse(channelIdFromRoute.ToString(), out long channelId) && token.Channel != channelId)
+      if (!authRepository.IsAuthorizedToAPITokenCacheAsync(channelIdFromRoute.ToString(), token.Id).Result)
       {
         logger.LogWarning("Channel Id provided in not the same as the channel Id of the authenticated user.");
 

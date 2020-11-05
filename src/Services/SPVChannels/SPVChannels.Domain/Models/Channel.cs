@@ -1,10 +1,14 @@
-﻿using System.Collections.Generic;
+﻿using Microsoft.AspNetCore.WebUtilities;
+using System.Collections.Generic;
+using System.Security.Cryptography;
 
 namespace SPVChannels.Domain.Models
 {
   public class Channel
   {
     public long Id { get; set; }
+
+    public string ExternalId { get; set; }
 
     public long Owner { get; set; }
 
@@ -29,5 +33,13 @@ namespace SPVChannels.Domain.Models
     /// </summary>
     public long HeadMessageSequence { get; set; }
 
+    public static string CreateExternalId()
+    {
+      byte[] data = new byte[64];
+      using RNGCryptoServiceProvider crypto = new RNGCryptoServiceProvider();
+      crypto.GetBytes(data);
+
+      return WebEncoders.Base64UrlEncode(data);
+    }
   }
 }

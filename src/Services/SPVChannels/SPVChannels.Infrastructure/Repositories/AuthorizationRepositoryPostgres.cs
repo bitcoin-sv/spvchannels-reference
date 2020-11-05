@@ -52,16 +52,16 @@ namespace SPVChannels.Infrastructure.Repositories
     #endregion
 
     #region IsAuthorizedToChannel
-    public async Task<bool> IsAuthorizedToChannelCacheAsync(long accountId, long channelId)
+    public async Task<bool> IsAuthorizedToChannelCacheAsync(long accountId, string channelExternalId)
     {
-      return await cache.GetOrCreateAsync($"{accountId}_{channelId}", async (cacheEntry) =>
+      return await cache.GetOrCreateAsync($"{accountId}_{channelExternalId}", async (cacheEntry) =>
       {
         SetupCacheEntry(cacheEntry);
-        return await IsAuthorizedToChannelDb(accountId, channelId);
+        return await IsAuthorizedToChannelDb(accountId, channelExternalId);
       });
     }
 
-    Task<bool> IsAuthorizedToChannelDb(long accountId, long channelId)
+    Task<bool> IsAuthorizedToChannelDb(long accountId, string channelExternalId)
     {
       using var connection = GetNpgsqlConnection();
       connection.Open();
@@ -69,9 +69,9 @@ namespace SPVChannels.Infrastructure.Repositories
       string select =
 "SELECT COUNT('x') " +
 "FROM Channel " +
-"WHERE Channel.owner = @accountId AND Channel.id = @channelId;";
+"WHERE Channel.owner = @accountId AND Channel.externalid = @channelExternalId;";
 
-      var res = connection.ExecuteScalar<long?>(select, new { accountId, channelId });
+      var res = connection.ExecuteScalar<long?>(select, new { accountId, channelExternalId });
       
       return Task.FromResult(res.HasValue && res.Value == 1);
     }
@@ -111,16 +111,25 @@ namespace SPVChannels.Infrastructure.Repositories
     #endregion
 
     #region IsAuthorizedToAPIToken
-    public async Task<bool> IsAuthorizedToAPITokenCacheAsync(long accountId, long channelId, long apiTokenId)
+    public async Task<bool> IsAuthorizedToAPITokenCacheAsync(long accountId, string channelExternalId, long apiTokenId)
     {
-      return await cache.GetOrCreateAsync($"{accountId}_{channelId}_{apiTokenId}", async (cacheEntry) =>
+      return await cache.GetOrCreateAsync($"{accountId}_{channelExternalId}_{apiTokenId}", async (cacheEntry) =>
       {
         SetupCacheEntry(cacheEntry);
-        return await IsAuthorizedToAPITokenDb(accountId, channelId, apiTokenId);
+        return await IsAuthorizedToAPITokenDb(accountId, channelExternalId, apiTokenId);
       });
     }
 
-    Task<bool> IsAuthorizedToAPITokenDb(long accountId, long channelId, long apiTokenId)
+    public async Task<bool> IsAuthorizedToAPITokenCacheAsync(string channelExternalId, long apiTokenId)
+    {
+      return await cache.GetOrCreateAsync($"{channelExternalId}_{apiTokenId}", async (cacheEntry) =>
+      {
+        SetupCacheEntry(cacheEntry);
+        return await IsAuthorizedToAPITokenDb(channelExternalId, apiTokenId);
+      });
+    }
+
+    Task<bool> IsAuthorizedToAPITokenDb(long accountId, string channelExternalId, long apiTokenId)
     {
       using var connection = GetNpgsqlConnection();
       connection.Open();
@@ -128,9 +137,27 @@ namespace SPVChannels.Infrastructure.Repositories
       string select =
 "SELECT COUNT('x') " +
 "FROM APIToken " +
-"WHERE APIToken.account = @accountId AND APIToken.channel = @channelId and APIToken.id = @apiTokenId;";
+"INNER JOIN Channel ON APIToken.channel = Channel.id " +
+"WHERE APIToken.account = @accountId AND Channel.externalid = @channelExternalId and APIToken.id = @apiTokenId;";
 
-      var res = connection.ExecuteScalar<long?>(select, new { accountId, channelId, apiTokenId });
+      var res = connection.ExecuteScalar<long?>(select, new { accountId, channelExternalId, apiTokenId });
+
+      return Task.FromResult(res.HasValue && res.Value == 1);
+    }
+
+
+    Task<bool> IsAuthorizedToAPITokenDb(string channelExternalId, long apiTokenId)
+    {
+      using var connection = GetNpgsqlConnection();
+      connection.Open();
+
+      string select =
+"SELECT COUNT('x') " +
+"FROM APIToken " +
+"INNER JOIN Channel ON APIToken.channel = Channel.id " +
+"WHERE Channel.externalid = @channelExternalId and APIToken.id = @apiTokenId;";
+
+      var res = connection.ExecuteScalar<long?>(select, new { channelExternalId, apiTokenId });
 
       return Task.FromResult(res.HasValue && res.Value == 1);
     }

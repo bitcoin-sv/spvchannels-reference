@@ -38,7 +38,7 @@ namespace SPVChannels.API.Rest.ViewModel
 
     public ChannelViewModelGet(Channel channel)
     {
-      Id = channel.Id.ToString();
+      Id = channel.ExternalId;
       APIToken = (from apiToken in channel.APIToken
                   select new APITokenViewModelGet
                   {

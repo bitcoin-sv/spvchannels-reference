@@ -27,11 +27,11 @@ namespace SPVChannels.API.Rest.ViewModel
       Locked = channel.Locked;
     }
 
-    public Channel ToDomainObject(long id = 0)
+    public Channel ToDomainObject(string externalId = null)
     {
       return new Channel
       {
-        Id = id,
+        ExternalId = externalId,
         PublicRead = PublicRead,
         PublicWrite = PublicWrite,
         Locked = Locked

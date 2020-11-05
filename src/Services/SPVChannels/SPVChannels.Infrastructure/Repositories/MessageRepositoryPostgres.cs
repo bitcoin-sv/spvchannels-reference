@@ -40,7 +40,7 @@ namespace SPVChannels.Infrastructure.Repositories
       return unreadCount ?? 0;
     }
 
-    public string GetMaxSequence(string token, long channelid)
+    public string GetMaxSequence(string token, string channelExternalId)
     {
       using var connection = GetNpgsqlConnection();
       connection.Open();
@@ -48,27 +48,24 @@ namespace SPVChannels.Infrastructure.Repositories
       string selectMaxSequence =
 "SELECT MAX(Message.seq) AS max_sequence " +
 "FROM Message " +
-"WHERE " +
-  "channel = @channelid AND " +
-  "EXISTS(" +
-    "SELECT 'x' " +
-    "FROM Channel " +
-    "WHERE Message.channel = Channel.id AND " +
-    "Channel.sequenced = true) AND " +
-  "EXISTS(" +
+"INNER JOIN Channel ON Channel.id = Message.channel " +
+"WHERE Channel.externalid = @channelExternalId " +
+  "AND Channel.sequenced = true " +
+  "AND EXISTS(" +
     "SELECT 'x' " +
     "FROM APIToken " +
-    "WHERE APIToken.token = @token AND " +
-    "(APIToken.validto IS NULL OR APIToken.validto >= @validto) AND APIToken.id = Message.fromtoken" +
-  ") AND " +
-  "EXISTS(" +
+    "WHERE APIToken.token = @token " +
+    "AND (APIToken.validto IS NULL OR APIToken.validto >= @validto) " +
+    "AND NOT APIToken.id = Message.fromtoken " +
+  ") " +
+  "AND EXISTS(" +
     "SELECT 'x' " +
     "FROM MessageStatus " +
     "WHERE MessageStatus.message = Message.id AND NOT MessageStatus.isdeleted);";
 
       var maxSequence = connection.ExecuteScalar<long?>(
         selectMaxSequence,
-        new { token, validto = DateTime.UtcNow, channelid }
+        new { token, validto = DateTime.UtcNow, channelExternalId }
       );
 
       return maxSequence.HasValue ? $"{maxSequence.Value}" : "0";
@@ -247,7 +244,7 @@ namespace SPVChannels.Infrastructure.Repositories
       return messageRes;
     }
 
-    public int MarkMessages(long channelId, long apiTokenId, long sequenceId, bool older, bool isRead)
+    public int MarkMessages(string channelExternalId, long apiTokenId, long sequenceId, bool older, bool isRead)
     {
       using var connection = GetNpgsqlConnection();
       connection.Open();
@@ -257,8 +254,10 @@ namespace SPVChannels.Infrastructure.Repositories
       string updateMessageStatus =
         "UPDATE MessageStatus SET isread = @isread " +
         "WHERE MessageStatus.message IN ( " +
-        "    SELECT id FROM Message " +
-        "    WHERE channel = @channel " +
+        "    SELECT Message.id " +
+        "    FROM Message " +
+        "    INNER JOIN Channel ON Message.channel = Channel.id " +
+        "    WHERE Channel.externalid = @channelExternalId " +
         "    AND (Message.seq = @seq OR (Message.seq < @seq AND @markOlder = TRUE)) " +
         "  )" +
         "  AND MessageStatus.token = @token ";
@@ -266,7 +265,7 @@ namespace SPVChannels.Infrastructure.Repositories
       int recordsAffected = connection.Execute(updateMessageStatus,
         new
         {
-          channel = channelId,
+          channelExternalId = channelExternalId,
           token = apiTokenId,
           seq = sequenceId,
           markOlder = older,
@@ -303,7 +302,7 @@ namespace SPVChannels.Infrastructure.Repositories
       return sequenceCount.HasValue && sequenceCount.Value == 1;
     }
 
-    public Message GetMessage(long channel, long seq)
+    public Message GetMessage(string channelExternalId, long seq)
     {
       using var connection = GetNpgsqlConnection();
       connection.Open();
@@ -312,19 +311,20 @@ namespace SPVChannels.Infrastructure.Repositories
         "SELECT Message.* " +
         "FROM Message " +
         "INNER JOIN MessageStatus ON MessageStatus.message = Message.id " +
-        "WHERE Message.channel = @channel " +
+        "INNER JOIN Channel ON Message.channel = Channel.id " +
+        "WHERE Channel.externalid = @channelExternalId " +
         "  AND Message.seq = @seq " +
         "  AND MessageStatus.isdeleted = false;";
 
       var data = connection.Query<Message>(
         selectChannelById,
-        new { channel, seq }
+        new { channelExternalId, seq }
       ).FirstOrDefault();
 
       return data;
     }
 
-    public Message GetMessageMetaData(long channel, long seq)
+    public Message GetMessageMetaData(string channelExternalId, long seq)
     {
       using var connection = GetNpgsqlConnection();
       connection.Open();
@@ -333,13 +333,14 @@ namespace SPVChannels.Infrastructure.Repositories
         "SELECT Message.id, Message.fromtoken, Message.channel, Message.seq, Message.receivedts, Message.contenttype " +
         "FROM Message " +
         "INNER JOIN MessageStatus ON MessageStatus.message = Message.id " +
-        "WHERE Message.channel = @channel " +
+        "INNER JOIN Channel ON Message.channel = Channel.id " +
+        "WHERE Channel.externalid = @channelExternalId " +
         "  AND Message.seq = @seq " +
         "  AND MessageStatus.isdeleted = false;";
 
       var data = connection.Query<Message>(
         selectChannelById,
-        new { channel, seq }
+        new { channelExternalId, seq }
       ).FirstOrDefault();
 
       return data;

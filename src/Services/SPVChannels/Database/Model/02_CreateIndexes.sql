@@ -4,7 +4,9 @@ CREATE INDEX IAccountCredential_Scheme_Credential ON AccountCredential (scheme, 
 
 CREATE INDEX IChannel_Owner ON Channel (owner);
 CREATE INDEX IChannel_Id ON Channel (id);
+CREATE INDEX IChannel_Externalid ON Channel (externalid);
 CREATE INDEX IChannel_Owner_Id ON Channel (owner, id);
+CREATE INDEX IChannel_Owner_Externalid ON Channel (owner, externalid);
 
 CREATE INDEX IAPIToken_Id ON APIToken (id);
 CREATE INDEX IAPIToken_Token ON APIToken (token);
