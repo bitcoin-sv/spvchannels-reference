@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script src="spv-channels.js"></script>
+    <script src="demo.js" defer></script>
+    <link rel="stylesheet" href="style.css">
+    <meta content="text/html; charset=utf-8" />
+    <title>SPV Channels Demo</title>
+</head>
+<body>
+    <h1>SPV Channels Demo</h1>
+
+    <form>
+        <div class="row">
+            <div class="col-md-12">
+                <label for="serviceUrl" >SPV Channels URL</label>
+            </div>
+            <div class="col-md-12">
+                <input type="text" id="serviceUrl" placeholder="https://yourhost:5010/api" style="width: 85%"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label for="accountId">Account id:</label>
+            </div>
+            <div class="col-md-12">
+                <input type="text" id="accountId" placeholder="1" style="width: 50%"/>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label for="username">Username:</label>
+            </div>
+            <div class="col-md-12">
+                <input type="text" id="username" placeholder="username" style="width: 50%" />
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-12">
+                <label for="password">Password:</label>
+            </div>
+            <div class="col-md-12">
+                <input type="password" id="password" style="width: 50%" />
+            </div>
+        </div> 
+        <button onClick="onCreateChannelClick(); return false;">Create new channel</button>
+        <label for="modal-control" class="button">Use existing channel</label>
+        <input type="checkbox" id="modal-control" class="modal">
+        <div role="dialog" aria-labelledby="dialog-title">
+            <div class="card large" style="max-height:400px;">
+                <label for="modal-control" class="modal-close" ></label>
+                <h3 class="section">Use existing channel</h3>
+                <form>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="channelId" >Channel id</label>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="text" id="channelId" placeholder="1" style="width: 90%"/>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <label for="encryptionKeyPairExisting">Channel encryption key pair:</label>
+                        </div>
+                        <div class="col-md-12">
+                            <input type="text" id="encryptionKeyPairExisting" placeholder="xxx" style="width: 90%"/>
+                        </div>
+                    </div>
+                    <button onClick="onConnectChannelClick(); return false;">Connect to channel</button>
+                </form>
+            </div>
+        </div>             
+    </form>
+    
+    <div id="channelLog" style="display:none">
+        <h3>Channel log</h3>
+        <div class="collapse">
+            <input type="checkbox" id="collapse-section1" aria-hidden="true">
+            <label for="collapse-section1" aria-hidden="true">Channel details</label>
+            <div>
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="channelUrl">Channel url:</label>
+                    </div>
+                    <div class="col-md-12">
+                        <input type="text" id="channelUrl" readonly style="width: 85%"/>
+                    </div>
+                </div> 
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="ownerToken">Owner token:</label>
+                    </div>
+                    <div class="col-md-12">
+                        <input type="text" id="ownerToken" readonly style="width: 85%"/>
+                    </div>
+                </div>                
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="secondPartyToken">Second party token:</label>
+                    </div>
+                    <div class="col-md-12">
+                        <input type="text" id="secondPartyToken" readonly style="width: 85%"/>
+                    </div>
+                </div>  
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="encryptionKeyPair">Encryption key pair:</label>
+                    </div>
+                    <div class="col-md-12">
+                        <input type="text" id="encryptionKeyPair" readonly style="width: 85%"/>
+                    </div>
+                </div>                
+                <div class="row">
+                    <div class="col-md-12">
+                        <label for="encryptionKey">Encryption key used for writing messages:</label>
+                    </div>
+                    <div class="col-md-12">
+                        <input type="text" id="encryptionKey" readonly style="width: 85%"/>
+                    </div>
+                </div>
+            </div>
+        </div> 
+        <input type="text" id="messageText" value="This is test message." /> <button id="btnSendMessage">Send test message from miner</button>
+        <div id="divLog" style="padding:10px">
+        </div>      
+    </div>
+</body>
+</html>

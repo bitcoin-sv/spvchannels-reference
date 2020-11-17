@@ -1,0 +1,11 @@
+{
+    "name": "SPV Channels Client",
+    "inputFiles": ["./src"],    
+    "mode": "file",
+    "theme": "minimal",
+    "out": "doc",
+    "excludePrivate": true,
+    "excludeNotExported": true,
+    "stripInternal": true,
+    "disableSources" : true
+}
