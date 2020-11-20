@@ -1,0 +1,637 @@
+openapi: 3.0.1
+info:
+  title: SPV Channels API
+  version: v1
+paths:
+  '/api/v1/account/{accountid}/channel/list':
+    get:
+      tags:
+        - Channel
+      summary: List all channels of the account.
+      parameters:
+        - name: accountid
+          in: path
+          description: Id of the account that is owner of the channels
+          required: true
+          schema:
+            type: string
+            description: Id of the account that is owner of the channels
+            nullable: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelViewModelList'
+  '/api/v1/account/{accountid}/channel/{channelid}':
+    get:
+      tags:
+        - Channel
+      summary: Get single channel details
+      parameters:
+        - name: accountid
+          in: path
+          description: Id of the account that is owner of the channel
+          required: true
+          schema:
+            type: string
+            description: Id of the account that is owner of the channel
+            nullable: true
+        - name: channelid
+          in: path
+          description: Id of channel
+          required: true
+          schema:
+            type: string
+            description: Id of channel
+            nullable: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelViewModelGet'
+    post:
+      tags:
+        - Channel
+      summary: Update given channel properties.
+      parameters:
+        - name: accountid
+          in: path
+          description: Id of the account that is owner of the channel
+          required: true
+          schema:
+            type: string
+            description: Id of the account that is owner of the channel
+            nullable: true
+        - name: channelid
+          in: path
+          description: Id of the channel that is being updated
+          required: true
+          schema:
+            type: string
+            description: Id of the channel that is being updated
+            nullable: true
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChannelViewModelAmend'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ChannelViewModelAmend'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ChannelViewModelAmend'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelViewModelAmend'
+    delete:
+      tags:
+        - Channel
+      summary: Delete given channel.
+      parameters:
+        - name: accountid
+          in: path
+          description: Id of the account that is owner of the channel
+          required: true
+          schema:
+            type: string
+            description: Id of the account that is owner of the channel
+            nullable: true
+        - name: channelid
+          in: path
+          description: Id of the channel that is being deleted
+          required: true
+          schema:
+            type: string
+            description: Id of the channel that is being deleted
+            nullable: true
+      responses:
+        '200':
+          description: Success
+  '/api/v1/account/{accountid}/channel':
+    post:
+      tags:
+        - Channel
+      summary: Create a new channel.
+      parameters:
+        - name: accountid
+          in: path
+          description: Id of the account that is owner of the channel
+          required: true
+          schema:
+            type: string
+            description: Id of the account that is owner of the channel
+            nullable: true
+      requestBody:
+        description: ''
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ChannelViewModelCreate'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/ChannelViewModelCreate'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/ChannelViewModelCreate'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ChannelViewModelGet'
+  '/api/v1/account/{accountid}/channel/{channelid}/api-token/{tokenid}':
+    get:
+      tags:
+        - Channel
+      summary: Get details of selected token.
+      parameters:
+        - name: accountid
+          in: path
+          description: Id of the account that is owner of the channel
+          required: true
+          schema:
+            type: string
+            description: Id of the account that is owner of the channel
+            nullable: true
+        - name: channelid
+          in: path
+          description: Id of the channel that this token was generated for
+          required: true
+          schema:
+            type: string
+            description: Id of the channel that this token was generated for
+            nullable: true
+        - name: tokenid
+          in: path
+          description: Id of the token
+          required: true
+          schema:
+            type: string
+            description: Id of the token
+            nullable: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APITokenViewModelGet'
+    delete:
+      tags:
+        - Channel
+      summary: Revoke selected token.
+      parameters:
+        - name: accountid
+          in: path
+          description: Id of the account that is owner of the channel
+          required: true
+          schema:
+            type: string
+            description: Id of the account that is owner of the channel
+            nullable: true
+        - name: channelid
+          in: path
+          description: Id of the channel that this token was generated for
+          required: true
+          schema:
+            type: string
+            description: Id of the channel that this token was generated for
+            nullable: true
+        - name: tokenid
+          in: path
+          description: Id of the token
+          required: true
+          schema:
+            type: string
+            description: Id of the token
+            nullable: true
+      responses:
+        '200':
+          description: Success
+  '/api/v1/account/{accountid}/channel/{channelid}/api-token':
+    get:
+      tags:
+        - Channel
+      summary: >-
+        Get list of tokens generated for selected channel with optional token
+        filter.
+      parameters:
+        - name: accountid
+          in: path
+          description: Id of the account that is owner of the channel
+          required: true
+          schema:
+            type: string
+            description: Id of the account that is owner of the channel
+            nullable: true
+        - name: channelid
+          in: path
+          description: Id of selected channel
+          required: true
+          schema:
+            type: string
+            description: Id of selected channel
+            nullable: true
+        - name: token
+          in: query
+          description: Optional filter for searching certain token
+          schema:
+            type: string
+            description: Optional filter for searching certain token
+            nullable: true
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APITokenViewModelGet'
+    post:
+      tags:
+        - Channel
+      summary: Create new token for selected channel
+      parameters:
+        - name: accountid
+          in: path
+          description: Id of the account that is owner of the channel
+          required: true
+          schema:
+            type: string
+            description: Id of the account that is owner of the channel
+            nullable: true
+        - name: channelid
+          in: path
+          description: Id of selected channel
+          required: true
+          schema:
+            type: string
+            description: Id of selected channel
+            nullable: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/APITokenViewModelCreate'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/APITokenViewModelCreate'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/APITokenViewModelCreate'
+      responses:
+        '200':
+          description: Success
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/APITokenViewModelGet'
+  '/api/v1/channel/{channelid}':
+    head:
+      tags:
+        - Message
+      summary: Get max message sequence in channel.
+      parameters:
+        - name: channelid
+          in: path
+          description: Id of selected channel
+          required: true
+          schema:
+            type: string
+            description: Id of selected channel
+            nullable: true
+      responses:
+        '200':
+          description: Success
+    post:
+      tags:
+        - Message
+      summary: Write new message to channel.
+      parameters:
+        - name: channelid
+          in: path
+          description: Id of selected channel.
+          required: true
+          schema:
+            type: string
+            description: Id of selected channel.
+            nullable: true
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                $ref: '#/components/schemas/MessageViewModelGet'
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MessageViewModelGet'
+            text/json:
+              schema:
+                $ref: '#/components/schemas/MessageViewModelGet'
+    get:
+      tags:
+        - Message
+      summary: Get list of messages from channel.
+      operationId: GetMessages
+      parameters:
+        - name: channelid
+          in: path
+          description: Id of selected channel
+          required: true
+          schema:
+            type: string
+            description: Id of selected channel
+            nullable: true
+        - name: unread
+          in: query
+          description: Optional filter for unread / all messages
+          schema:
+            type: boolean
+            description: Optional filter for unread / all messages
+            nullable: true
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageViewModelGet'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageViewModelGet'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageViewModelGet'
+  '/api/v1/channel/{channelid}/{sequence}':
+    post:
+      tags:
+        - Message
+      summary: Mark messages as read / unread
+      parameters:
+        - name: channelid
+          in: path
+          description: Id of selected channel
+          required: true
+          schema:
+            type: string
+            description: Id of selected channel
+            nullable: true
+        - name: sequence
+          in: path
+          description: Sequence of selected message
+          required: true
+          schema:
+            type: integer
+            description: Sequence of selected message
+            format: int64
+        - name: older
+          in: query
+          description: Optional parameter to mark also all older messages.
+          schema:
+            type: boolean
+            description: Optional parameter to mark also all older messages.
+            nullable: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/MessageViewModelMark'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/MessageViewModelMark'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/MessageViewModelMark'
+      responses:
+        '200':
+          description: Success
+          content:
+            text/plain:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageViewModelGet'
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageViewModelGet'
+            text/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/MessageViewModelGet'
+    delete:
+      tags:
+        - Message
+      summary: Delete selected message.
+      parameters:
+        - name: channelid
+          in: path
+          description: Id of selected channel.
+          required: true
+          schema:
+            type: string
+            description: Id of selected channel.
+            nullable: true
+        - name: sequence
+          in: path
+          description: Sequence of selected message
+          required: true
+          schema:
+            type: string
+            description: Sequence of selected message
+            nullable: true
+      responses:
+        '200':
+          description: Success
+  '/api/v1/channel/{channelid}/notify':
+    get:
+      tags:
+        - Notification
+      summary: Subscribe to push notifications using web sockets.
+      parameters:
+        - name: channelid
+          in: path
+          description: Id of selected channel
+          required: true
+          schema:
+            type: string
+            description: Id of selected channel
+            nullable: true
+      responses:
+        '200':
+          description: Success
+components:
+  schemas:
+    RetentionViewModel:
+      required:
+        - auto_prune
+      type: object
+      properties:
+        min_age_days:
+          type: integer
+          format: int32
+          nullable: true
+        max_age_days:
+          type: integer
+          format: int32
+          nullable: true
+        auto_prune:
+          type: boolean
+      additionalProperties: false
+    APITokenViewModelGet:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        token:
+          type: string
+          nullable: true
+        description:
+          type: string
+          nullable: true
+        can_read:
+          type: boolean
+        can_write:
+          type: boolean
+      additionalProperties: false
+    ChannelViewModelGet:
+      type: object
+      properties:
+        id:
+          type: string
+          nullable: true
+        href:
+          type: string
+          nullable: true
+        public_read:
+          type: boolean
+        public_write:
+          type: boolean
+        sequenced:
+          type: boolean
+        locked:
+          type: boolean
+        head:
+          type: integer
+          format: int64
+        retention:
+          $ref: '#/components/schemas/RetentionViewModel'
+        access_tokens:
+          type: array
+          items:
+            $ref: '#/components/schemas/APITokenViewModelGet'
+          nullable: true
+      additionalProperties: false
+    ChannelViewModelList:
+      type: object
+      properties:
+        channels:
+          type: array
+          items:
+            $ref: '#/components/schemas/ChannelViewModelGet'
+          nullable: true
+      additionalProperties: false
+    ChannelViewModelAmend:
+      required:
+        - locked
+        - public_read
+        - public_write
+      type: object
+      properties:
+        public_read:
+          type: boolean
+        public_write:
+          type: boolean
+        locked:
+          type: boolean
+      additionalProperties: false
+    ChannelViewModelCreate:
+      required:
+        - public_read
+        - public_write
+        - retention
+        - sequenced
+      type: object
+      properties:
+        public_read:
+          type: boolean
+        public_write:
+          type: boolean
+        sequenced:
+          type: boolean
+        retention:
+          $ref: '#/components/schemas/RetentionViewModel'
+      additionalProperties: false
+    APITokenViewModelCreate:
+      required:
+        - can_read
+        - can_write
+        - description
+      type: object
+      properties:
+        description:
+          maxLength: 1024
+          minLength: 0
+          type: string
+        can_read:
+          type: boolean
+        can_write:
+          type: boolean
+      additionalProperties: false
+    MessageViewModelGet:
+      type: object
+      properties:
+        sequence:
+          type: integer
+          format: int64
+        received:
+          type: string
+          format: date-time
+        content_type:
+          type: string
+          nullable: true
+        payload:
+          type: string
+          nullable: true
+      additionalProperties: false
+    MessageViewModelMark:
+      type: object
+      properties:
+        read:
+          type: boolean
+      additionalProperties: false
+  securitySchemes:
+    basic:
+      type: http
+      description: Basic Authorization header.
+      scheme: basic
+    Bearer:
+      type: apiKey
+      description: >-
+        Authorization header using the Bearer scheme (Example: 'Bearer
+        12345abcdef')
+      name: Authorization
+      in: header
+security:
+  - basic: []
+  - Bearer: []
