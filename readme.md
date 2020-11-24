@@ -5,6 +5,8 @@ In addition do server side implementation, it also contains JavaScript client li
 
 SPV Channels provides a mechanism via which counterparties can communicate in a secure manner even in instances where one of the parties is temporarily offline.
 
+### [Swagger UI](https://bitcoin-sv.github.io/spvchannels-reference/)  
+
 # Deploying SPV Channels CE API Server as docker containers on Linux
 
 ## Pre Requirements:
