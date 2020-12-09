@@ -16,7 +16,7 @@ namespace SPVChannels.Test.Functional
         .UseContentRoot(Path.GetDirectoryName(path))
         .ConfigureAppConfiguration(cb =>
         {
-          cb.AddJsonFile("appsettings.Test.json", optional: false)
+          cb.AddJsonFile("appsettings.json")
             .AddEnvironmentVariables();
         });
 
