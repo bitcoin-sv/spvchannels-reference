@@ -29,7 +29,5 @@ cp install/* ../deploy
 cd ..
 
 docker build --build-arg APPVERSION=$APPVERSION -t bitcoinsv/spvchannels:$VERSIONPREFIX -f src/Services/SPVChannels/SPVChannels.API.Rest/Dockerfile .
-docker build  -t bitcoinsv/spvchannels-db:$VERSIONPREFIX -f src/Services/SPVChannels/Database/Dockerfile .
 
 docker save bitcoinsv/spvchannels:$VERSIONPREFIX > deploy/spvchannelsapi.tar
-docker save bitcoinsv/spvchannels-db:$VERSIONPREFIX > deploy/spvchannelsdata.tar

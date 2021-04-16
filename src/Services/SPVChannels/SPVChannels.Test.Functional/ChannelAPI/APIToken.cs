@@ -141,7 +141,7 @@ namespace SPVChannels.Test.Functional.ChannelAPI
     
     private async Task CreateChannel()
     {
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -171,7 +171,7 @@ namespace SPVChannels.Test.Functional.ChannelAPI
 
     public async Task DeleteChannel()
     {
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -216,7 +216,7 @@ namespace SPVChannels.Test.Functional.ChannelAPI
     {
       InitChannelForAPIToken();
 
-      using var server = CreateServer();
+      
       var unauthorizedClient = server.CreateClient();
       unauthorizedClient.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Incorrect();
 
@@ -240,7 +240,7 @@ namespace SPVChannels.Test.Functional.ChannelAPI
     {
       InitChannelForAPIToken();
 
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -275,7 +275,7 @@ namespace SPVChannels.Test.Functional.ChannelAPI
       //Init test data
       InitChannelForAPIToken();
 
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 

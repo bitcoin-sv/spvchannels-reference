@@ -279,5 +279,13 @@ namespace SPVChannels.Infrastructure.Repositories
       return updateChannelResult;
     }
 
+    public static void EmptyRepository(string connectionString)
+    {
+      using var connection = new NpgsqlConnection(connectionString);
+      connection.Open();
+      string cmdText =
+        "DELETE FROM MessageStatus; DELETE FROM Message; DELETE FROM APIToken; DELETE FROM Channel; ALTER SEQUENCE Channel_id_seq RESTART WITH 1; ALTER SEQUENCE APIToken_id_seq RESTART WITH 1; ALTER SEQUENCE Message_id_seq RESTART WITH 1; ALTER SEQUENCE MessageStatus_id_seq RESTART WITH 1;";
+      connection.Execute(cmdText, null);
+    }
   }
 }

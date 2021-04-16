@@ -8,7 +8,13 @@ namespace SPVChannels.Infrastructure.Repositories
   public class BaseRepositoryPostgres
   {
     private readonly string connectionString;
-    public BaseRepositoryPostgres(IOptions<AppConfiguration> options)
+
+    public BaseRepositoryPostgres(string connectionString)
+    {
+      this.connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
+    }
+
+    public BaseRepositoryPostgres(IOptions<AppConfiguration> options): this(options.Value.DBConnectionString)
     {
       if (options == null)
       {
@@ -18,8 +24,6 @@ namespace SPVChannels.Infrastructure.Repositories
       {
         if (options.Value == null)
           throw new ArgumentNullException(nameof(AppConfiguration));
-
-        this.connectionString = options.Value.DBConnectionString;
       }
     }
 

@@ -26,6 +26,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\SPVChannels.Database\SPVChannels.Database.csproj" />
     <ProjectReference Include="..\SPVChannels.Domain\SPVChannels.Domain.csproj" />
     <ProjectReference Include="..\SPVChannels.Infrastructure\SPVChannels.Infrastructure.csproj" />
   </ItemGroup>

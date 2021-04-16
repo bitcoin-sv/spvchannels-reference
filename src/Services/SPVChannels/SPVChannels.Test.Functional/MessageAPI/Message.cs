@@ -181,7 +181,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
     {
       _postRawData = false;
 
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderForTokenCreation();
 
@@ -206,7 +206,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
 
     public async Task DeleteChannel()
     {
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderForTokenCreation();
 
@@ -217,7 +217,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
 
     private async Task CreateAPIToken()
     {
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderForTokenCreation();
 
@@ -248,7 +248,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
         CreateRetention(min_age_days: 0);
         InitChannelForAPIToken();
 
-        using var server = CreateServer();
+        
         var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -293,7 +293,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
         CreateRetention(min_age_days: 2, max_age_days:10);
         InitChannelForAPIToken();
 
-        using var server = CreateServer();
+        
         var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -333,7 +333,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
 
         InitChannelForAPIToken();
 
-        using var server = CreateServer();
+        
         var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -365,7 +365,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
 
         InitChannelForAPIToken();
 
-        using var server = CreateServer();
+        
         var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 

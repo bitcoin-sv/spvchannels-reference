@@ -1,0 +1,1 @@
+GRANT channels_crud TO channelstest;
