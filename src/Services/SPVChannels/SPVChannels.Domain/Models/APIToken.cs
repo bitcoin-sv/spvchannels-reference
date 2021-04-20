@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.WebUtilities;
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 
 namespace SPVChannels.Domain.Models
@@ -13,6 +14,8 @@ namespace SPVChannels.Domain.Models
     public long Channel { get; set; }
 
     public string Token { get; set; }
+
+    public IList<FCMToken> FCMTokens { get; set; }
 
     public string Description { get; set; }
 

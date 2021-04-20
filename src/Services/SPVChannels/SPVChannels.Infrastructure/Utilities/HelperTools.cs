@@ -5,7 +5,8 @@ using System.Threading.Tasks;
 namespace SPVChannels.Infrastructure.Utilities
 {
   public class HelperTools
-  {    public async static Task ExecuteWithRetries(int noOfRetries, string errorMessage, Func<Task> methodToExecute, int sleepTimeBetweenRetries = 1000)
+  {    
+    public async static Task ExecuteWithRetries(int noOfRetries, string errorMessage, Func<Task> methodToExecute, int sleepTimeBetweenRetries = 1000)
     {
       try
       {
@@ -35,5 +36,10 @@ namespace SPVChannels.Infrastructure.Utilities
         throw;
       }
     }
+    public static string SerializeDateTimeToJSON(DateTime value)
+    {
+      return value.ToString("yyyy-MM-ddThh:mm:ss.fffffffZ");
+    }
+
   }
 }

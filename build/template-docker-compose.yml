@@ -34,6 +34,7 @@ services:
       - AppConfiguration:CacheSize=${CACHESIZE}
       - AppConfiguration:CacheSlidingExpirationTime=${CACHESLIDINGEXPIRATIONTIME}
       - AppConfiguration:CacheAbsoluteExpirationTime=${CACHEABSOLUTEEXPIRATIONTIME}
+      - AppConfiguration:FirebaseCredentialsFilePath=$/config/{FIREBASECREDENTIALSFILENAME}
       - ASPNETCORE_ENVIRONMENT=Production
       - ASPNETCORE_NPGSQLLOGMANAGER=${NPGSQLLOGMANAGER}
       - ASPNETCORE_URLS=https://+:443

@@ -6,15 +6,16 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Text;
 using Microsoft.Extensions.Logging;
+using SPVChannels.Domain.Models;
 
 namespace SPVChannels.Infrastructure.Notification
 {
-  public class NotificationWebSocketHandler : INotificationWebSocketHandler
+  public class WebSocketHandler : INotificationHandler, IWebSocketHandler
   {
-    readonly ILogger<NotificationWebSocketHandler> logger;
+    readonly ILogger<WebSocketHandler> logger;
     private Dictionary<long, List<NotificationSubscription>> subscriptions = new Dictionary<long, List<NotificationSubscription>>();
 
-    public NotificationWebSocketHandler(ILogger<NotificationWebSocketHandler> logger)
+    public WebSocketHandler(ILogger<WebSocketHandler> logger)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
     }
@@ -52,18 +53,18 @@ namespace SPVChannels.Infrastructure.Notification
       return null;
     }
 
-    public async Task SendNotification(long sourceTokenId, long channelId, DateTime timestamp, string message)
+    public async Task SendNotification(long sourceTokenId, PushNotification notification)
     {
       IEnumerable<NotificationSubscription> toSentTo;
-
+      string message = System.Text.Json.JsonSerializer.Serialize(notification.Message);
       lock (subscriptions)
       {
-        if (!subscriptions.ContainsKey(channelId))
+        if (!subscriptions.ContainsKey(notification.Channel.Id))
         {
           return;
         }
 
-        toSentTo = subscriptions[channelId].ToList();
+        toSentTo = subscriptions[notification.Channel.Id].ToList();
       }
 
       var tasks = toSentTo.Select(async subscription =>

@@ -44,6 +44,7 @@ namespace SPVChannels.API.Rest
 
       services.AddTransient<IChannelRepository, ChannelRepositoryPostgres>();
       services.AddTransient<IAPITokenRepository, APITokenRepositoryPostgres>();
+      services.AddTransient<IFCMTokenRepository, FCMTokenRepositoryPostgres>();
       services.AddTransient<IMessageRepository, MessageRepositoryPostgres>();
 
       services.AddAuthentication()
@@ -67,7 +68,10 @@ namespace SPVChannels.API.Rest
       services.AddTransient<IDbManager, SPVChannelsDbManager>();
       services.AddHostedService<StartupChecker>();
 
-      services.AddSingleton<INotificationWebSocketHandler, NotificationWebSocketHandler>();
+      services.AddSingleton<IWebSocketHandler, WebSocketHandler>();
+      services.AddSingleton<INotificationHandler>(p => (INotificationHandler)p.GetService<IWebSocketHandler>());
+      services.AddSingleton<INotificationHandler, FCMHandler>();
+
       services.AddHostedService<NotificationWebSocketCleanupService>();
 
       services.AddCors(options =>
