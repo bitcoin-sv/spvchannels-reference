@@ -17,6 +17,7 @@ namespace SPVChannels.Test.Functional
         .ConfigureAppConfiguration(cb =>
         {
           cb.AddJsonFile("appsettings.json")
+            .AddJsonFile("appsettings.Development.json", optional: true)
             .AddEnvironmentVariables();
         });
 
