@@ -23,5 +23,7 @@ namespace SPVChannels.Infrastructure.Utilities
     public int CacheSlidingExpirationTime { get; set; } = 60;
 
     public int CacheAbsoluteExpirationTime { get; set; } = 600;
+
+    public string FirebaseCredentialsFilePath { get; set; }
   }
 }

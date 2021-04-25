@@ -8,10 +8,10 @@ namespace SPVChannels.Infrastructure.Notification
 {
   public class NotificationWebSocketCleanupService : BackgroundService 
   {
-    readonly ILogger<NotificationWebSocketHandler> logger;
-    readonly INotificationWebSocketHandler webSocketHandler;
+    readonly ILogger<WebSocketHandler> logger;
+    readonly IWebSocketHandler webSocketHandler;
 
-    public NotificationWebSocketCleanupService(ILogger<NotificationWebSocketHandler> logger, INotificationWebSocketHandler webSocketHandler)
+    public NotificationWebSocketCleanupService(ILogger<WebSocketHandler> logger, IWebSocketHandler webSocketHandler)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.webSocketHandler = webSocketHandler ?? throw new ArgumentNullException(nameof(webSocketHandler));
