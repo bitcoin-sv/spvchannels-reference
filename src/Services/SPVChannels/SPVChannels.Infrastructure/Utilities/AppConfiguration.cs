@@ -8,6 +8,8 @@ namespace SPVChannels.Infrastructure.Utilities
   {
     public string DBConnectionString { get; set; }
 
+    public string DBConnectionStringDDL { get; set; }
+
     public string NotificationTextNewMessage { get; set; }
 
     public int MaxMessageContentLength { get; set; }

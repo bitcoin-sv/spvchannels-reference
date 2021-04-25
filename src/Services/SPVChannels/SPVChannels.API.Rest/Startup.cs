@@ -7,6 +7,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using SPVChannels.API.Rest.Database;
 using SPVChannels.Domain.Repositories;
 using SPVChannels.Infrastructure.Auth;
 using SPVChannels.Infrastructure.Notification;
@@ -25,7 +26,7 @@ namespace SPVChannels.API.Rest
     public IConfiguration Configuration { get; }
 
     // This method gets called by the runtime. Use this method to add services to the container.
-    public void ConfigureServices(IServiceCollection services)
+    public virtual void ConfigureServices(IServiceCollection services)
     {
       services.AddControllers();
       services.Configure<ForwardedHeadersOptions>(options =>
@@ -63,6 +64,7 @@ namespace SPVChannels.API.Rest
       services.AddScoped<IAuthRepository, AuthorizationRepositoryPostgres>();
       services.AddTransient<IAccountRepository, AccountRepositoryPostgres>();
 
+      services.AddTransient<IDbManager, SPVChannelsDbManager>();
       services.AddHostedService<StartupChecker>();
 
       services.AddSingleton<INotificationWebSocketHandler, NotificationWebSocketHandler>();

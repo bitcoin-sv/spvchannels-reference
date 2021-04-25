@@ -9,7 +9,14 @@ ARG APPVERSION
 WORKDIR /src
 COPY ["src/Services/SPVChannels/SPVChannels.API.Rest/SPVChannels.API.Rest.csproj", "Services/SPVChannels/SPVChannels.API.Rest/"]
 COPY ["src/Services/SPVChannels/SPVChannels.Infrastructure/SPVChannels.Infrastructure.csproj", "Services/SPVChannels/SPVChannels.Infrastructure/"]
+COPY ["src/Services/SPVChannels/SPVChannels.Database/SPVChannels.Database.csproj", "Services/SPVChannels/SPVChannels.Database/"]
 COPY ["src/Services/SPVChannels/SPVChannels.Domain/SPVChannels.Domain.csproj", "Services/SPVChannels/SPVChannels.Domain/"]
+
+### Temporary sloution until we deploy CreateDB to nuget.org ########
+COPY ["src/Packages", "Packages"]
+COPY ["src/nuget.config", "nuget.config"]
+############################################################################### (edited) 
+
 RUN dotnet restore "Services/SPVChannels/SPVChannels.API.Rest/SPVChannels.API.Rest.csproj"
 COPY src/. .
 WORKDIR "/src/Services/SPVChannels/SPVChannels.API.Rest"

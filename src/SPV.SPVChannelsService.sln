@@ -17,6 +17,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SPVChannels.Infrastructure"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SPVChannels.Test.Functional", "Services\SPVChannels\SPVChannels.Test.Functional\SPVChannels.Test.Functional.csproj", "{8100E58E-9B3E-40B4-AA7A-6231A06501F7}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SPVChannels.Database", "Services\SPVChannels\SPVChannels.Database\SPVChannels.Database.csproj", "{E8A778FA-9538-476C-BDBB-B75BA13DEA1D}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{8100E58E-9B3E-40B4-AA7A-6231A06501F7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{8100E58E-9B3E-40B4-AA7A-6231A06501F7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{8100E58E-9B3E-40B4-AA7A-6231A06501F7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{E8A778FA-9538-476C-BDBB-B75BA13DEA1D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E8A778FA-9538-476C-BDBB-B75BA13DEA1D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E8A778FA-9538-476C-BDBB-B75BA13DEA1D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E8A778FA-9538-476C-BDBB-B75BA13DEA1D}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -50,6 +56,7 @@ Global
 		{18D8A838-E902-4C03-AA06-9158494581C8} = {AEE897BA-57B9-4DE3-8BC3-6B471CAB208F}
 		{348D8FB8-5751-44B8-91CE-AA721827CE34} = {AEE897BA-57B9-4DE3-8BC3-6B471CAB208F}
 		{8100E58E-9B3E-40B4-AA7A-6231A06501F7} = {AEE897BA-57B9-4DE3-8BC3-6B471CAB208F}
+		{E8A778FA-9538-476C-BDBB-B75BA13DEA1D} = {AEE897BA-57B9-4DE3-8BC3-6B471CAB208F}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {935D3D90-B7B2-4D16-B66C-684358285AA3}
