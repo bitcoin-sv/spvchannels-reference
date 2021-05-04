@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Configuration;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using nChain.CreateDB;
 using nChain.CreateDB.DB;

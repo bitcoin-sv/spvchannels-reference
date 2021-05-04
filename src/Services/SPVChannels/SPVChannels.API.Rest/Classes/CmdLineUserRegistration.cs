@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.DependencyInjection;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Microsoft.Extensions.DependencyInjection;
 using SPVChannels.Domain.Repositories;
 using System;
 using System.CommandLine;

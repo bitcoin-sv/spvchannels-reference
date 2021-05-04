@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Options;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Microsoft.Extensions.Options;
 using Npgsql;
 using SPVChannels.Infrastructure.Utilities;
 using System;

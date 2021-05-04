@@ -1,4 +1,7 @@
-﻿using Dapper;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Dapper;
 using Npgsql;
 using SPVChannels.Domain.Models;
 using SPVChannels.Domain.Repositories;
