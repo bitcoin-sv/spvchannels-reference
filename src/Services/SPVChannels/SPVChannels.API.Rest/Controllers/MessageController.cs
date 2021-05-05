@@ -92,11 +92,15 @@ namespace SPVChannels.API.Rest.Controllers
           (int)HttpStatusCode.BadRequest,
           $"Missing content type header."));
       }
-
-      long contentLength = Request.ContentLength.GetValueOrDefault(0);
       
-      // Retrieve token information from identity
-      APIToken apiToken = await authRepository.GetAPITokenAsync(HttpContext.User.Identity.Name.ToString());
+      long contentLength = Request.ContentLength.GetValueOrDefault(0);
+
+      if (contentLength == 0)
+      {
+        return BadRequest(ProblemDetailsFactory.CreateProblemDetails(HttpContext,
+          (int)HttpStatusCode.BadRequest,
+          $"Payload is empty."));
+      }
 
       // If we got content length header than validate that it is not over message length limit
       if (contentLength > configuration.MaxMessageContentLength)
@@ -107,6 +111,9 @@ namespace SPVChannels.API.Rest.Controllers
           (int)HttpStatusCode.RequestEntityTooLarge, 
           $"Payload Too Large"));
       }
+
+      // Retrieve token information from identity
+      APIToken apiToken = await authRepository.GetAPITokenAsync(HttpContext.User.Identity.Name.ToString());
 
       // Retrieve channel data
       Channel channel = channelRepository.GetChannelByExternalId(channelid);
