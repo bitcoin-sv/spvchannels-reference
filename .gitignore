@@ -27,3 +27,4 @@
 /src/Services/SPVChannels/.aspnet
 deploy
 /install/setup_CA.sh
+**/*.user
