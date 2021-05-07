@@ -1,3 +1,6 @@
+-- Copyright (c) 2020 Bitcoin Association.
+-- Distributed under the Open BSV software license, see the accompanying file LICENSE
+
 CREATE TABLE Message (
   id            BIGSERIAL          NOT NULL,
   fromtoken     BIGINT             NOT NULL,

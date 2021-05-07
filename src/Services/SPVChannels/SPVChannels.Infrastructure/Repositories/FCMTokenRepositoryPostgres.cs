@@ -1,12 +1,13 @@
-﻿using Dapper;
-using Microsoft.Extensions.Caching.Memory;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Dapper;
 using Microsoft.Extensions.Options;
 using Npgsql;
 using SPVChannels.Domain.Models;
 using SPVChannels.Domain.Repositories;
 using SPVChannels.Infrastructure.Utilities;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace SPVChannels.Infrastructure.Repositories

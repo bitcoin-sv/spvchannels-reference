@@ -1,4 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SPVChannels.API.Rest.ViewModel;
 using System.Linq;
 using System.Net;

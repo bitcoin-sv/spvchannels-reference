@@ -1,3 +1,6 @@
+-- Copyright (c) 2020 Bitcoin Association.
+-- Distributed under the Open BSV software license, see the accompanying file LICENSE
+
 CREATE TABLE IF NOT EXISTS Channel (
   id            BIGSERIAL          NOT NULL,
   owner         BIGINT             NOT NULL,

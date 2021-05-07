@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using System;
 using System.Threading;
 using System.Threading.Tasks;
 
