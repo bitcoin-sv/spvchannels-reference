@@ -70,12 +70,16 @@ namespace SPVChannels.Infrastructure.Notification
         catch (FirebaseMessagingException fbEx)
         {
           // Handle FCM token invalidation
-          if (fbEx.HttpResponse.StatusCode == System.Net.HttpStatusCode.BadRequest)
+          if (fbEx.HttpResponse.StatusCode == System.Net.HttpStatusCode.NotFound ||
+              fbEx.HttpResponse.StatusCode == System.Net.HttpStatusCode.BadRequest)
           {
-            logger.LogError($"Received {fbEx.HttpResponse.StatusCode} {fbEx.Message} from Firebase. Marking FCM {subscription.Token} as invalid.");
+            logger.LogWarning($"Received {fbEx.HttpResponse.StatusCode} {fbEx.Message} from Firebase. Marking FCM {subscription.Token} as invalid.");
             fcmTokenRepository.MarkFCMTokenAsInvalid(subscription.Token);
           }
-          throw fbEx;
+          else
+          {
+            throw fbEx;
+          }
         }
         catch (Exception ex)
         {
