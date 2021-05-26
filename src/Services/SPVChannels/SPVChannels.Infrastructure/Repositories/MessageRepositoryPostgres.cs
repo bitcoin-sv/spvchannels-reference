@@ -29,11 +29,17 @@ namespace SPVChannels.Infrastructure.Repositories
       using var connection = GetNpgsqlConnection();
       connection.Open();
 
+      return GetUnreadMessagesCount(apiTokenId, connection);
+    }
+
+    private long GetUnreadMessagesCount(long apiTokenId, NpgsqlConnection connection)
+    {
       string selectUnreadMessageCount =
         "SELECT Count(MessageStatus.*) " +
         "FROM MessageStatus " +
         "WHERE MessageStatus.token = @tokenid " +
-        "  AND MessageStatus.isread = FALSE;";
+        "  AND MessageStatus.isread = FALSE " +
+        "  AND MessageStatus.isdeleted = FALSE ";
 
       var unreadCount = connection.ExecuteScalar<long?>(
         selectUnreadMessageCount,
@@ -178,17 +184,7 @@ namespace SPVChannels.Infrastructure.Repositories
 
           if (channelData.sequenced)
           {
-            string selectUnreadMessageCount =
-              "SELECT Count(MessageStatus.*) " +
-              "FROM MessageStatus " +
-              "WHERE MessageStatus.token = @tokenid " +
-              "  AND MessageStatus.isread = FALSE;";
-
-            var unreadCount = connection.ExecuteScalar<long>(
-              selectUnreadMessageCount,
-              new { tokenid = message.FromToken }
-            );
-
+            var unreadCount = GetUnreadMessagesCount(message.FromToken, connection);
             if (unreadCount > 0)
             {
               errorCode = SPVChannelsHTTPError.SequencingFailure.Code;
