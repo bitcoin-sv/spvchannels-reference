@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using System;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
@@ -9,6 +12,7 @@ using SPVChannels.Infrastructure.Auth;
 using SPVChannels.Infrastructure.Notification;
 using System.Net.WebSockets;
 using Microsoft.Extensions.Logging;
+using SPVChannels.API.Rest.ViewModel;
 
 namespace SPVChannels.API.Rest.Controllers
 {
@@ -19,11 +23,11 @@ namespace SPVChannels.API.Rest.Controllers
   {
     readonly IAuthRepository authRepository;
     readonly ILogger<NotificationController> logger;
-    readonly INotificationWebSocketHandler notificationHandler;    
+    readonly IWebSocketHandler notificationHandler;    
 
     public NotificationController(IAuthRepository authRepository, 
       ILogger<NotificationController> logger, 
-      INotificationWebSocketHandler notificationHandler)
+      IWebSocketHandler notificationHandler)
     {
       this.authRepository = authRepository ?? throw new ArgumentNullException(nameof(authRepository));
       this.notificationHandler = notificationHandler ?? throw new ArgumentNullException(nameof(notificationHandler));

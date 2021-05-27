@@ -1,3 +1,6 @@
+// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -7,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using SPVChannels.API.Rest.Database;
 using SPVChannels.Domain.Repositories;
 using SPVChannels.Infrastructure.Auth;
 using SPVChannels.Infrastructure.Notification;
@@ -25,7 +29,7 @@ namespace SPVChannels.API.Rest
     public IConfiguration Configuration { get; }
 
     // This method gets called by the runtime. Use this method to add services to the container.
-    public void ConfigureServices(IServiceCollection services)
+    public virtual void ConfigureServices(IServiceCollection services)
     {
       services.AddControllers();
       services.Configure<ForwardedHeadersOptions>(options =>
@@ -43,6 +47,7 @@ namespace SPVChannels.API.Rest
 
       services.AddTransient<IChannelRepository, ChannelRepositoryPostgres>();
       services.AddTransient<IAPITokenRepository, APITokenRepositoryPostgres>();
+      services.AddTransient<IFCMTokenRepository, FCMTokenRepositoryPostgres>();
       services.AddTransient<IMessageRepository, MessageRepositoryPostgres>();
 
       services.AddAuthentication()
@@ -63,9 +68,13 @@ namespace SPVChannels.API.Rest
       services.AddScoped<IAuthRepository, AuthorizationRepositoryPostgres>();
       services.AddTransient<IAccountRepository, AccountRepositoryPostgres>();
 
+      services.AddTransient<IDbManager, SPVChannelsDbManager>();
       services.AddHostedService<StartupChecker>();
 
-      services.AddSingleton<INotificationWebSocketHandler, NotificationWebSocketHandler>();
+      services.AddSingleton<IWebSocketHandler, WebSocketHandler>();
+      services.AddSingleton<INotificationHandler>(p => (INotificationHandler)p.GetService<IWebSocketHandler>());
+      services.AddSingleton<INotificationHandler, FCMHandler>();
+
       services.AddHostedService<NotificationWebSocketCleanupService>();
 
       services.AddCors(options =>

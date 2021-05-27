@@ -1,8 +1,13 @@
-﻿using Microsoft.AspNetCore.TestHost;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Options;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SPVChannels.API.Rest.ViewModel;
+using SPVChannels.Domain.Repositories;
+using SPVChannels.Infrastructure.Repositories;
 using SPVChannels.Infrastructure.Utilities;
 using System.Net;
 using System.Net.Http;
@@ -18,17 +23,13 @@ namespace SPVChannels.Test.Functional
     where TPostViewModel : class
     where TListViewModel : class
   {
-    public TestServer CreateServer()
-    {
-      var server = new TestServerBase().CreateServer(false);
-      Config = server.Services.GetService<IOptions<AppConfiguration>>().Value;
-      return server;
-    }
-
+    protected TestServer server;
     public AppConfiguration Config { get; set; }
 
+    public string Accountname => "Test Account";
+
     public string _badAccountId = "0";
-    public string _validAccountId = "1";
+    public string _validAccountId;
     public string _invalidAccountId = long.MaxValue.ToString();
 
     public string _badChannelId = "0";
@@ -73,6 +74,24 @@ namespace SPVChannels.Test.Functional
     public virtual void InitChannelForAPIToken() { }
 
     public virtual void DisposeChannelForAPIToken() { }
+
+    [TestInitialize]
+    public virtual void TestInitialize()
+    {
+      server = new TestServerBase().CreateServer(false);
+      Config = server.Services.GetService<IOptions<AppConfiguration>>().Value;
+      var accountRepository = server.Services.GetService<IAccountRepository>();
+
+      AuthenticationHeaderValue authenticationData = new AuthenticationHeaderValue("Basic", "VGVzdDp0ZXN0");
+      _validAccountId = accountRepository.CreateAccount(Accountname, authenticationData.Scheme, authenticationData.Parameter).ToString();
+    }
+
+  [TestCleanup]
+    public virtual void TestCleanup()
+    {
+      ChannelRepositoryPostgres.EmptyRepository(Config.DBConnectionStringDDL);
+      AccountRepositoryPostgres.EmptyRepository(Config.DBConnectionStringDDL);
+    }
 
     #region Get
     public async Task<TResponse> Get<TResponse>(HttpClient client, string uri, HttpStatusCode expectedStatusCode) where TResponse : class
@@ -162,9 +181,7 @@ namespace SPVChannels.Test.Functional
       {
         //Init test data
         InitChannelForAPIToken();
-
-        using var server = CreateServer();
-
+        
         var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -187,7 +204,6 @@ namespace SPVChannels.Test.Functional
     {
       if (AllowsGet)
       {
-        using TestServer server = CreateServer();
         var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -205,7 +221,7 @@ namespace SPVChannels.Test.Functional
         //Init test data
         InitChannelForAPIToken();
 
-        using var server = CreateServer();
+        
         var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -254,7 +270,7 @@ namespace SPVChannels.Test.Functional
         //Init test data
         InitChannelForAPIToken();
 
-        using var server = CreateServer();
+        
         var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -294,7 +310,7 @@ namespace SPVChannels.Test.Functional
         //Init test data
         InitChannelForAPIToken();
 
-        using var server = CreateServer();
+        
         var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 

@@ -34,7 +34,7 @@ For running in production environment, you should use Docker.
      - `docker-compose.yml`
      - `.env`
      
-5. Create config folder and save SSL server certificate file (<certificate_file_name>.pfx) into to the config folder. This server certificate is required to setup TLS (SSL).
+5. Create config folder and save SSL server certificate file (<certificate_file_name>.pfx) into the config folder. This server certificate is required to setup TLS (SSL).
 
 6.	Before running the SPV Channels API Server containers (spvchannels-db and spvchannels), you must configure or replace some values in the `.env` file.
 
@@ -43,6 +43,7 @@ For running in production environment, you should use Docker.
 |CERTIFICATE_FILENAME_VALUE|Fully qualified file name of the SSL server certificate (e.g. *<certificate_file_name.pfx>*) copied in step 5.|
 |CERTIFICATES_PASSWORD_VALUE|The password of the *.pfx file copied in step 5.|
    > **Note:** The remaining setting are explaned in section [Settings](#Settings).
+
 
 ## Running application
 1. After everything is set up and configured correctly, you can launch the spvchannels-db and spvchannels containers using the following command.
@@ -80,6 +81,12 @@ Parameter description:
 
    > **Note:** This command can also be used to add new users to an existing account (e.g. running `docker exec spvchannels ./SPVChannels.API.Rest -createaccount Accountname User1 OtherP@ssword` will return account-id of Accountname).
 
+## Setting up mobile push notifications
+To enable push notifications from SPV Channels a Firebase service account key is required. Copy *.json file containing Firebase service account key into the config folder and set FIREBASECREDENTIALSFILENAME in the `.env` file.
+
+>To get Firebase service account *.json file, log in to your Firebase console and from Project Setting -> Service account -> Click on generate new private key. This will generate *.json file with your Firebase service account key.
+
+
 ## REST interface
 
 The reference implementation exposes different **REST API** interfaces:
@@ -104,6 +111,7 @@ This interfaces can be accessed on `https://<servername>:<port>/api/v1`. Swagger
 | CACHESIZE | `<number>` | Number of records in memorycach. By defaulte it's set to `1048576`. |
 | CACHESLIDINGEXPIRATIONTIME | `<number>` | Time in witch a record is removed from memorycach if it is not accessed. By defaulte it's set to `60` secunds. |
 | CACHEABSOLUTEEXPIRATIONTIME | `<number>` | Time in witch a record is removed from memorycach. By defaulte it's set to `600` secunds. |
+|FIREBASECREDENTIALSFILENAME| `<text>` | Fully qualified file name of the Firebase service account key. This setting is only required if you wish to enable mobile push notifications. See [Setting up mobile push notifications](#Setting-up-mobile-push-notifications)
 
 ## Terminating application
 

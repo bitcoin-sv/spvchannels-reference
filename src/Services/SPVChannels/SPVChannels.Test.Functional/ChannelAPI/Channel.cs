@@ -1,4 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SPVChannels.API.Rest.ViewModel;
 using System.Linq;
 using System.Net;
@@ -193,7 +196,7 @@ namespace SPVChannels.Test.Functional.ChannelAPI
     [TestMethod]
     public async Task Unauthorized()
     {
-      using var server = CreateServer();
+      
       var unauthorizedClient = server.CreateClient();
       unauthorizedClient.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Incorrect();
 
@@ -219,7 +222,7 @@ namespace SPVChannels.Test.Functional.ChannelAPI
     [TestMethod]
     public async Task Forbidden()
     {
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -243,7 +246,7 @@ namespace SPVChannels.Test.Functional.ChannelAPI
     public async Task Test_GetBy()
     {
       //Init test data
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -276,7 +279,7 @@ namespace SPVChannels.Test.Functional.ChannelAPI
     public async Task Test_Post_Retention()
     {
       //Init test data
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -317,7 +320,7 @@ namespace SPVChannels.Test.Functional.ChannelAPI
     [TestMethod]
     public async Task Test_Amend()
     {
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 

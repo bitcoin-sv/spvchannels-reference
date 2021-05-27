@@ -1,4 +1,7 @@
-﻿using System;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using System;
 using Dapper;
 using Npgsql;
 using SPVChannels.Domain.Models;
@@ -168,12 +171,7 @@ namespace SPVChannels.Infrastructure.Repositories
           HeadMessageSequence = data.seq ?? 0
         };
 
-        string selectAPITokens =
-"SELECT * " +
-"FROM APIToken " +
-"WHERE channel = @channel and (validto IS NULL OR validto >= @validto);";
-
-        channel.APIToken = connection.Query<APIToken>(selectAPITokens, param: new { channel = channelId, validto = DateTime.UtcNow }).ToArray();
+        channel.APIToken = GetChannelAPITokens(connection, channel.Id);
 
       }
       return channel;
@@ -208,15 +206,38 @@ namespace SPVChannels.Infrastructure.Repositories
           HeadMessageSequence = data.seq ?? 0
         };
 
-        string selectAPITokens =
-"SELECT * " +
-"FROM APIToken " +
-"WHERE channel = @channel and (validto IS NULL OR validto >= @validto);";
-
-        channel.APIToken = connection.Query<APIToken>(selectAPITokens, param: new { channel = channel.Id, validto = DateTime.UtcNow }).ToArray();
-
+        channel.APIToken = GetChannelAPITokens(connection, channel.Id);
       }
       return channel;
+    }
+
+    private IEnumerable<APIToken> GetChannelAPITokens(NpgsqlConnection connection, long channelId)
+    {
+      string selectAPITokens =
+"SELECT APIToken.*, FCMToken.* " +
+"FROM APIToken " +
+"LEFT JOIN FCMToken ON FCMToken.apitoken = APIToken.id " +
+"WHERE APIToken.channel = @channel and (APIToken.validto IS NULL OR APIToken.validto >= @validto);";
+
+      var apiTokensDict = new Dictionary<long, APIToken>();
+      connection.Query<APIToken, FCMToken, APIToken>(
+        selectAPITokens,
+        (apiToken, fcmToken) => {
+          APIToken obj;
+            // check if this api token is already in our dictionary and we will only add FCM token
+            if (!apiTokensDict.TryGetValue(apiToken.Id, out obj))
+          {
+            apiTokensDict.Add(apiToken.Id, obj = apiToken);
+            obj.FCMTokens = new List<FCMToken>();
+          }
+          if (fcmToken != null)
+            obj.FCMTokens.Add(fcmToken);
+          return obj;
+        },
+        param: new { channel = channelId, validto = DateTime.UtcNow }
+      ).AsQueryable();
+
+      return apiTokensDict.Values.ToArray();
     }
 
     public void DeleteChannel(string externalId)
@@ -236,6 +257,7 @@ namespace SPVChannels.Infrastructure.Repositories
       string delete = 
 "DELETE FROM MessageStatus WHERE message IN (SELECT id FROM Message WHERE Message.channel = @id); " +
 "DELETE FROM Message WHERE channel = @id; " +
+"DELETE FROM FCMToken WHERE apitoken IN (SELECT id FROM APIToken WHERE APIToken.channel = @id); " +
 "DELETE FROM APIToken WHERE channel = @id; " +
 "DELETE FROM Channel WHERE id = @id;";
 
@@ -279,5 +301,13 @@ namespace SPVChannels.Infrastructure.Repositories
       return updateChannelResult;
     }
 
+    public static void EmptyRepository(string connectionString)
+    {
+      using var connection = new NpgsqlConnection(connectionString);
+      connection.Open();
+      string cmdText =
+        "DELETE FROM MessageStatus; DELETE FROM Message; DELETE FROM APIToken; DELETE FROM Channel; ALTER SEQUENCE Channel_id_seq RESTART WITH 1; ALTER SEQUENCE APIToken_id_seq RESTART WITH 1; ALTER SEQUENCE Message_id_seq RESTART WITH 1; ALTER SEQUENCE MessageStatus_id_seq RESTART WITH 1;";
+      connection.Execute(cmdText, null);
+    }
   }
 }

@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -24,21 +27,21 @@ namespace SPVChannels.API.Rest.Controllers
   {
     readonly IMessageRepository messageRepository;
     readonly IChannelRepository channelRepository;
-    readonly INotificationWebSocketHandler notificationHandler;
+    readonly IEnumerable<INotificationHandler> notificationHandlers;
     readonly IAuthRepository authRepository;
     readonly ILogger<MessageController> logger;
     readonly AppConfiguration configuration;
 
     public MessageController(IMessageRepository messageRepository,
       IChannelRepository channelRepository,
-      INotificationWebSocketHandler notificationHandler,
+      IEnumerable<INotificationHandler> notificationHandlers,
       IAuthRepository authRepository,
       ILogger<MessageController> logger,
       IOptions<AppConfiguration> options)
     {
       this.messageRepository = messageRepository ?? throw new ArgumentNullException(nameof(messageRepository));
       this.channelRepository = channelRepository ?? throw new ArgumentNullException(nameof(channelRepository));
-      this.notificationHandler = notificationHandler ?? throw new ArgumentNullException(nameof(notificationHandler));
+      this.notificationHandlers = notificationHandlers ?? throw new ArgumentNullException(nameof(notificationHandlers));
       this.authRepository = authRepository ?? throw new ArgumentNullException(nameof(authRepository));
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       if(options == null)
@@ -51,8 +54,7 @@ namespace SPVChannels.API.Rest.Controllers
           throw new ArgumentNullException(nameof(AppConfiguration));
 
         configuration = options.Value;
-      }
-      
+      }      
     }
 
     // HEAD: /api/v1/channel/<channel-id>
@@ -93,11 +95,15 @@ namespace SPVChannels.API.Rest.Controllers
           (int)HttpStatusCode.BadRequest,
           $"Missing content type header."));
       }
-
-      long contentLength = Request.ContentLength.GetValueOrDefault(0);
       
-      // Retrieve token information from identity
-      APIToken apiToken = await authRepository.GetAPITokenAsync(HttpContext.User.Identity.Name.ToString());
+      long contentLength = Request.ContentLength.GetValueOrDefault(0);
+
+      if (contentLength == 0)
+      {
+        return BadRequest(ProblemDetailsFactory.CreateProblemDetails(HttpContext,
+          (int)HttpStatusCode.BadRequest,
+          $"Payload is empty."));
+      }
 
       // If we got content length header than validate that it is not over message length limit
       if (contentLength > configuration.MaxMessageContentLength)
@@ -108,6 +114,9 @@ namespace SPVChannels.API.Rest.Controllers
           (int)HttpStatusCode.RequestEntityTooLarge, 
           $"Payload Too Large"));
       }
+
+      // Retrieve token information from identity
+      APIToken apiToken = await authRepository.GetAPITokenAsync(HttpContext.User.Identity.Name.ToString());
 
       // Retrieve channel data
       Channel channel = channelRepository.GetChannelByExternalId(channelid);
@@ -173,16 +182,19 @@ namespace SPVChannels.API.Rest.Controllers
 
 
       // Send push notification
-      NotificationViewModel notification = new NotificationViewModel
+      PushNotification notification = new PushNotification
       {
-        Channel = channel.ExternalId,
+        Channel = channel,
         Received = message.ReceivedTS,
-        Notification = configuration.NotificationTextNewMessage
+        Message = configuration.NotificationTextNewMessage
       };
 
-      _ = Task.Run(() =>
-          notificationHandler.SendNotification(apiToken.Id, channel.Id, message.ReceivedTS, System.Text.Json.JsonSerializer.Serialize(notification))
-      );
+      _ = Task.Run(() => {
+        foreach (var notificationHandler in notificationHandlers)
+        {
+          notificationHandler.SendNotification(apiToken.Id, notification);
+        }
+      });
 
       return Ok(new MessageViewModelGet(returnResult));
     }

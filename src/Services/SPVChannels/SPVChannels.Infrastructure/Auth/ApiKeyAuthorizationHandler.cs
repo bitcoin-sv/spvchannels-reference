@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Routing;
 using Microsoft.Extensions.Logging;
@@ -37,22 +40,26 @@ namespace SPVChannels.Infrastructure.Auth
       var token = authRepository.GetAPITokenAsync(context.User.FindFirst(ClaimTypes.Name).Value).Result;
 
       var routeData = httpContextAccessor.HttpContext.GetRouteData();
-      if (!routeData.Values.TryGetValue("channelid", out object channelid))
+      // Skip channel validation for PushNotifications
+      routeData.Values.TryGetValue("controller", out object controller);
+      if (controller == null || controller.ToString() != "PushNotifications")
       {
-        logger.LogWarning("Channel Id wasn't provided.");
+        if (!routeData.Values.TryGetValue("channelid", out object channelid))
+        {
+          logger.LogWarning("Channel Id wasn't provided.");
 
-        context.Fail();
-        return Task.FromResult(AuthorizationFailure.Failed(new ApiKeyRequirement[] { }));
+          context.Fail();
+          return Task.FromResult(AuthorizationFailure.Failed(new ApiKeyRequirement[] { }));
+        }
+
+        if (!authRepository.IsAuthorizedToAPITokenCacheAsync(channelid.ToString(), token.Id).Result)
+        {
+          logger.LogWarning($"Channel Id({channelid}) isn't authorized to access token Id({token.Id}).");
+
+          context.Fail();
+          return Task.FromResult(AuthorizationFailure.Failed(new ApiKeyRequirement[] { }));
+        }
       }
-            
-      if (!authRepository.IsAuthorizedToAPITokenCacheAsync(channelid.ToString(), token.Id).Result)
-      {
-        logger.LogWarning($"Channel Id({channelid}) isn't authorized to access token Id({token.Id}).");
-
-        context.Fail();
-        return Task.FromResult(AuthorizationFailure.Failed(new ApiKeyRequirement[] { }));
-      }
-
       context.Succeed(requirement);      
       return Task.FromResult(AuthorizationResult.Success());
     }

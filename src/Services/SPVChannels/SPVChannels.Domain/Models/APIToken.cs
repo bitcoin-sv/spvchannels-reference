@@ -1,5 +1,9 @@
-﻿using Microsoft.AspNetCore.WebUtilities;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Microsoft.AspNetCore.WebUtilities;
 using System;
+using System.Collections.Generic;
 using System.Security.Cryptography;
 
 namespace SPVChannels.Domain.Models
@@ -13,6 +17,8 @@ namespace SPVChannels.Domain.Models
     public long Channel { get; set; }
 
     public string Token { get; set; }
+
+    public IList<FCMToken> FCMTokens { get; set; }
 
     public string Description { get; set; }
 

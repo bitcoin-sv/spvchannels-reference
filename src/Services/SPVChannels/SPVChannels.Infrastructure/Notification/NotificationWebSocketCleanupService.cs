@@ -1,4 +1,7 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Threading;
@@ -8,10 +11,10 @@ namespace SPVChannels.Infrastructure.Notification
 {
   public class NotificationWebSocketCleanupService : BackgroundService 
   {
-    readonly ILogger<NotificationWebSocketHandler> logger;
-    readonly INotificationWebSocketHandler webSocketHandler;
+    readonly ILogger<WebSocketHandler> logger;
+    readonly IWebSocketHandler webSocketHandler;
 
-    public NotificationWebSocketCleanupService(ILogger<NotificationWebSocketHandler> logger, INotificationWebSocketHandler webSocketHandler)
+    public NotificationWebSocketCleanupService(ILogger<WebSocketHandler> logger, IWebSocketHandler webSocketHandler)
     {
       this.logger = logger ?? throw new ArgumentNullException(nameof(logger));
       this.webSocketHandler = webSocketHandler ?? throw new ArgumentNullException(nameof(webSocketHandler));

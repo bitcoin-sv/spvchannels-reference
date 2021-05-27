@@ -1,4 +1,7 @@
-﻿using Microsoft.AspNetCore.TestHost;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Microsoft.AspNetCore.TestHost;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SPVChannels.API.Rest.ViewModel;
 using System;
@@ -95,7 +98,6 @@ namespace SPVChannels.Test.Functional.Notification
       //Init test data
       InitChannelForAPIToken();
 
-      var server = CreateServer();
       var wsc = server.CreateWebSocketClient();      
 
       /// Connect to notification web socket
@@ -191,7 +193,7 @@ namespace SPVChannels.Test.Functional.Notification
     private async Task CreateChannel()
     {
       _postRawData = false;
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderForTokenCreation();
 
@@ -220,7 +222,7 @@ namespace SPVChannels.Test.Functional.Notification
 
     public async Task DeleteChannel()
     {
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderForTokenCreation();
 
@@ -231,7 +233,6 @@ namespace SPVChannels.Test.Functional.Notification
 
     private async Task CreateAPIToken()
     {
-      var server = CreateServer();
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderForTokenCreation();
 

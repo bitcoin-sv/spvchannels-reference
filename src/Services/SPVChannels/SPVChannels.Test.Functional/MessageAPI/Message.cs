@@ -1,4 +1,7 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using SPVChannels.API.Rest.ViewModel;
 using System;
 using System.Linq;
@@ -181,7 +184,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
     {
       _postRawData = false;
 
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderForTokenCreation();
 
@@ -206,7 +209,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
 
     public async Task DeleteChannel()
     {
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderForTokenCreation();
 
@@ -217,7 +220,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
 
     private async Task CreateAPIToken()
     {
-      using var server = CreateServer();
+      
       var client = server.CreateClient();
       client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderForTokenCreation();
 
@@ -248,7 +251,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
         CreateRetention(min_age_days: 0);
         InitChannelForAPIToken();
 
-        using var server = CreateServer();
+        
         var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -293,7 +296,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
         CreateRetention(min_age_days: 2, max_age_days:10);
         InitChannelForAPIToken();
 
-        using var server = CreateServer();
+        
         var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -333,7 +336,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
 
         InitChannelForAPIToken();
 
-        using var server = CreateServer();
+        
         var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 
@@ -365,7 +368,7 @@ namespace SPVChannels.Test.Functional.MessageAPI
 
         InitChannelForAPIToken();
 
-        using var server = CreateServer();
+        
         var client = server.CreateClient();
         client.DefaultRequestHeaders.Authorization = GetAuthenticationHeaderValue_Correct();
 

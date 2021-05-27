@@ -1,5 +1,9 @@
-﻿using Microsoft.Extensions.Hosting;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
+using SPVChannels.API.Rest.Database;
 using SPVChannels.Domain.Repositories;
 using SPVChannels.Infrastructure.Utilities;
 using System;
@@ -13,13 +17,17 @@ namespace SPVChannels.API.Rest
     readonly IChannelRepository channelRepository;
     readonly IHostApplicationLifetime hostApplicationLifetime;
     readonly ILogger<StartupChecker> logger;
+    readonly IDbManager dbManager;
+
     public StartupChecker(IChannelRepository channelRepository,
                           IHostApplicationLifetime hostApplicationLifetime,
-                          ILogger<StartupChecker> logger)
+                          ILogger<StartupChecker> logger,
+                          IDbManager dbManager)
     {
-      this.channelRepository = channelRepository;
-      this.hostApplicationLifetime = hostApplicationLifetime;
-      this.logger = logger;
+      this.channelRepository = channelRepository ?? throw new ArgumentException(nameof(channelRepository));
+      this.hostApplicationLifetime = hostApplicationLifetime ?? throw new ArgumentException(nameof(hostApplicationLifetime));
+      this.logger = logger ?? throw new ArgumentException(nameof(logger));
+      this.dbManager = dbManager ?? throw new ArgumentException(nameof(dbManager));
     }
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -28,6 +36,9 @@ namespace SPVChannels.API.Rest
       {
         var dbTask = HelperTools.ExecuteWithRetries(10, "Unable to open connection to database", () => TestDBConnection());
         Task.WaitAll(new Task[] { dbTask });
+
+        ExecuteCreateDb();
+
         logger.LogInformation("Health checks completed successfully.");
       }
       catch (Exception ex)
@@ -44,9 +55,31 @@ namespace SPVChannels.API.Rest
     {
       return Task.CompletedTask;
     }
+
+    private void ExecuteCreateDb()
+    {
+      logger.LogInformation($"Starting with execution of CreateDb ...");
+
+
+      if (dbManager.CreateDb(out string errorMessage, out string errorMessageShort))
+      {
+        logger.LogInformation("CreateDb finished successfully.");
+      }
+      else
+      {
+        // if error we must stop application
+        throw new Exception($"Error when executing CreateDb: { errorMessage }{ Environment.NewLine }ErrorMessage: {errorMessageShort}");
+      }
+
+      logger.LogInformation($"ExecuteCreateDb completed.");
+    }
+
     private Task TestDBConnection()
     {
-      channelRepository.GetChannelById(0);
+      if (dbManager.DatabaseExists())
+      {
+        logger.LogInformation($"Successfully connected to DB.");
+      }
       return Task.CompletedTask;
     }
   }

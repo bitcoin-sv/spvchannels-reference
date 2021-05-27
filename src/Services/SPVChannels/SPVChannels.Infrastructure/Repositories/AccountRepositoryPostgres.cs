@@ -1,4 +1,7 @@
-﻿using Dapper;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
+using Dapper;
 using Microsoft.Extensions.Options;
 using Npgsql;
 using SPVChannels.Domain.Models;
@@ -10,7 +13,16 @@ namespace SPVChannels.Infrastructure.Repositories
 {
   public class AccountRepositoryPostgres : BaseRepositoryPostgres, IAccountRepository
   {
-    public AccountRepositoryPostgres(IOptions<AppConfiguration> op) : base(op) { }
+    public AccountRepositoryPostgres(IOptions<AppConfiguration> appConfiguration) : base(appConfiguration) { }
+
+    public static void EmptyRepository(string connectionString)
+    {
+      using var connection = new NpgsqlConnection(connectionString);
+      connection.Open();
+      string cmdText =
+        "DELETE FROM AccountCredential; DELETE FROM Account; ALTER SEQUENCE Account_id_seq RESTART WITH 1; ALTER SEQUENCE AccountCredential_id_seq RESTART WITH 1";
+      connection.Execute(cmdText, null);
+    }
 
     public long CreateAccount(string accountname, string scheme, string credential)
     {

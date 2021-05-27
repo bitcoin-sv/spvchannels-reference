@@ -1,4 +1,6 @@
-﻿using System;
+﻿// Copyright(c) 2020 Bitcoin Association.
+// Distributed under the Open BSV software license, see the accompanying file LICENSE
+
 using System.Collections.Generic;
 using System.CommandLine;
 using System.CommandLine.Help;

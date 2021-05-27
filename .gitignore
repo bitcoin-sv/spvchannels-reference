@@ -3,6 +3,8 @@
 /src/Services/SPVChannels/SPVChannels.API/*.user
 /src/Services/SPVChannels/SPVChannels.Domain/obj
 /src/Services/SPVChannels/SPVChannels.Domain/bin
+/src/Services/SPVChannels/SPVChannels.Database/obj
+/src/Services/SPVChannels/SPVChannels.Database/bin
 /src/Services/SPVChannels/SPVChannels.Infrastructure/obj
 /src/Services/SPVChannels/SPVChannels.Infrastructure/bin
 /src/Services/SPVChannels/SPVChannels.Test.Functional/obj
@@ -25,3 +27,4 @@
 /src/Services/SPVChannels/.aspnet
 deploy
 /install/setup_CA.sh
+**/*.user
