@@ -1,13 +1,18 @@
 # SPV Channels CE
 
-This repository contains SPV Channels Community Edition, which implements the [BRFC specification](https://github.com/bitcoin-sv-specs/brfc-spvchannels) for SPV channels.
-In addition to server side implementation, it also contains the JavaScript client libraries for interacting with the server. See [Client libraries readme](client/javascript/readme.md) for more details about the client side libraries. 
+
+| Contents | Version |
+|-|-|
+| SPV Channels Community Edition | 1.1.0 |
+
+This repository contains SPV Channels CE, which is an implementation of the [BRFC specification](https://github.com/bitcoin-sv-specs/brfc-spvchannels) for SPV channels.
+In addition to a server side implementation, it also contains the JavaScript client libraries for interacting with the server. See [Client libraries readme](client/javascript/readme.md) for more details about the client side libraries. 
 
 SPV Channels provides a mechanism via which counterparties can communicate in a secure manner even in circumstances where one of the parties is temporarily offline.
 
 ## Swagger UI
 
-The REST API can also be seen in the [Swagger UI](https://bitcoin-sv.github.io/spvchannels-reference/).
+The REST API can be reviewed in [Swagger UI](https://bitcoin-sv.github.io/spvchannels-reference/).
 
 # Deploying SPV Channels CE API Server as docker containers on Linux
 
