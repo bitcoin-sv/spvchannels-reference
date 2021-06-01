@@ -223,9 +223,7 @@ paths:
     get:
       tags:
         - Channel
-      summary: >-
-        Get list of tokens generated for selected channel with optional token
-        filter.
+      summary: Get list of tokens generated for selected channel with optional token filter.
       parameters:
         - name: accountid
           in: path
@@ -479,6 +477,67 @@ paths:
       responses:
         '200':
           description: Success
+  /api/v1/pushnotifications:
+    post:
+      tags:
+        - PushNotifications
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushNotificationTokenViewModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/PushNotificationTokenViewModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/PushNotificationTokenViewModel'
+      responses:
+        '200':
+          description: Success
+  '/api/v1/pushnotifications/{oldToken}':
+    put:
+      tags:
+        - PushNotifications
+      parameters:
+        - name: oldToken
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/PushNotificationTokenViewModel'
+          text/json:
+            schema:
+              $ref: '#/components/schemas/PushNotificationTokenViewModel'
+          application/*+json:
+            schema:
+              $ref: '#/components/schemas/PushNotificationTokenViewModel'
+      responses:
+        '200':
+          description: Success
+    delete:
+      tags:
+        - PushNotifications
+      parameters:
+        - name: oldToken
+          in: path
+          required: true
+          schema:
+            type: string
+            nullable: true
+        - name: channelId
+          in: query
+          schema:
+            type: string
+            nullable: true
+      responses:
+        '200':
+          description: Success
 components:
   schemas:
     RetentionViewModel:
@@ -620,6 +679,13 @@ components:
         read:
           type: boolean
       additionalProperties: false
+    PushNotificationTokenViewModel:
+      type: object
+      properties:
+        token:
+          type: string
+          nullable: true
+      additionalProperties: false
   securitySchemes:
     basic:
       type: http
@@ -627,11 +693,10 @@ components:
       scheme: basic
     Bearer:
       type: apiKey
-      description: >-
-        Authorization header using the Bearer scheme (Example: 'Bearer
-        12345abcdef')
+      description: 'Authorization header using the Bearer scheme (Example: ''Bearer 12345abcdef'')'
       name: Authorization
       in: header
 security:
   - basic: []
   - Bearer: []
+
