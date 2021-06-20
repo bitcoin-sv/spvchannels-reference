@@ -470,7 +470,7 @@ export class MessagingClient
     /** 
      * Check that notifications are active.
      * 
-     * @returns True if notifications wesocket is open.
+     * @returns True if notifications websocket is open.
      */
     public notificationsActive() : boolean
     {
