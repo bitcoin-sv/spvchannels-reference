@@ -163,7 +163,7 @@ export class ChannelsClient
      * @param token Token string.
      * @returns Token details.
      */
-    async getToken(channel: Channel, token: string): Promise<AccessToken>
+    async getToken(channel: Channel, token: string): Promise<AccessToken|null>
     {
         console.debug(`Calling listTokens to ${this.getServiceUrl()} for channel with id ${channel.id} using username ${this._username}`);
         
