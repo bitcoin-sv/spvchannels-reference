@@ -172,7 +172,7 @@ export class ChannelsClient
         if (resp.status != 200)
             throw new Error(`Error calling SPV channels API. Invalid status code received: ${resp.status.toString()}`); 
 
-        if (resp.data.length = 1)
+        if (resp.data.length === 1)
             return resp.data[0];
 
         return null;
