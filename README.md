@@ -1,5 +1,6 @@
 # SPV Channels CE
 
+Readme version 1.1.1.
 
 | Contents | Version |
 |-|-|
@@ -17,17 +18,17 @@ The REST API can be reviewed in [Swagger UI](https://bitcoin-sv.github.io/spvcha
 # Deploying SPV Channels CE API Server as docker containers on Linux
 
 ## Pre Requirements:
-A SSL server certificate is required for installation. You can obtain the certificate from your IT support team. There are are also services that issue free SSL certificates such as letsencrypt.org.  The certificate must be issued for the host with fully qualified domain name. To use the server side certificate, you need to export it (including the corresponding private key) in PFX file format (*.pfx).
+A SSL server certificate is required for installation. Obtain the certificate from your IT support team. There are are also services that issue free SSL certificates such as `letsencrypt.org`.  The certificate must be issued for the host with a fully qualified domain name. To use the server side certificate, you need to export it (including the corresponding private key) in PFX file format (*.pfx).
 
-API Clients must trust the Certification Authority (CA) that issued server side SSL certificate.
+API Clients must trust the Certification Authority (CA) that issued the server side SSL certificate.
 
 ## Initial setup
 
-For running in a production environment, you should use Docker.
+The distribution is shared and run using Docker.
 
-1.	Open the terminal.
+1. Open the terminal.
 
-2. Create a directory where the spvchannels docker images, config and database will be stored (e.g. spvchannels) and navigate to it.
+2. Create a directory where the spvchannels docker images, config and database will be stored (e.g. spvchannels) and navigate to it:
 
     ```
     mkdir spvchannels
@@ -41,31 +42,32 @@ For running in a production environment, you should use Docker.
      - `docker-compose.yml`
      - `.env`
      
-5. Create a config folder and save the SSL server certificate file (<certificate_file_name>.pfx) into the config folder. This server certificate is required to setup TLS (SSL).
+5. Create a `config` folder and copy the SSL server certificate file (<certificate_file_name>.pfx) into it. This server certificate is required to setup TLS (SSL).
 
-6.	Before running the SPV Channels API Server containers (spvchannels-db and spvchannels), you must configure or replace some values in the `.env` file.
+6. Before running the SPV Channels API Server containers (spvchannels-db and spvchannels), replace some values in the `.env` file:
 
 | Parameter | Description |
 | --------- | ----------- |
-|CERTIFICATE_FILENAME_VALUE|Fully qualified file name of the SSL server certificate (e.g. *<certificate_file_name.pfx>*) copied in step 5.|
-|CERTIFICATES_PASSWORD_VALUE|The password of the *.pfx file copied in step 5.|
+|CERTIFICATEFILENAME|File name of the SSL server certificate (e.g. *<certificate_file_name.pfx>*) copied in step 5.|
+|CERTIFICATESPASSWORD|Password of the *.pfx file copied in step 5.|
    > **Note:** The remaining setting are explaned in section [Settings](#Settings).
 
 
-## Running application
-1. After everything is set up and configured correctly, you can launch the spvchannels-db and spvchannels containers using the following command:
+## Running the application
+1. After the `.env` is set up, you can launch the spvchannels-db and spvchannels containers using the following command:
 
     ```
     docker-compose up –d
     ```
 
-The docker images are automatically pulled from Docker Hub. 
+The docker images as specified by the `docker-compose.yml` file, are automatically pulled from Docker Hub.
 
-2. Finally you can verify that all the SPV Channels Server containers are running (bitcoinsv/spvchannels-db and bitcoinsv/spvchannels) using:
+2. Verify that all the SPV Channels Server containers are running using:
 
     ```
     docker ps
     ```
+The list should include `bitcoinsv/spvchannels-db` and `bitcoinsv/spvchannels`.
    
 3. If everything is running you can continue to section [Account manager](#Account-manager:) to create an account.
 
@@ -82,16 +84,16 @@ Parameter description:
 
 | Parameter | Description |
 | ----------- | ----------- |
-| [accountname] | name of the account, any whitespaces in accoutname must be replaced with '_' |
+| [accountname] | name of the account, any whitespaces in accountname must be replaced with '_' |
 | [username] | username of the account |
 | [password] | password of the username |
 
    > **Note:** This command can also be used to add new users to an existing account (e.g. running `docker exec spvchannels ./SPVChannels.API.Rest -createaccount Accountname User1 OtherP@ssword` will return the account-id of Accountname).
 
 ## Setting up mobile push notifications
-To enable push notifications from SPV Channels a Firebase service account key is required. Copy *.json file containing Firebase service account key into the config folder and set FIREBASECREDENTIALSFILENAME in the `.env` file.
+To enable mobile push notifications from SPV Channels, a Firebase service account key is required. Copy the *.json file containing the Firebase service account key into the config folder and set FIREBASECREDENTIALSFILENAME in the `.env` file.
 
->To get Firebase service account *.json file, log in to your Firebase console and from Project Setting -> Service account -> Click on generate new private key. This will generate *.json file with your Firebase service account key.
+>To get a Firebase service account *.json file, log in to your Firebase console and from Project Setting -> Service account -> Click on generate new private key. This will generate a *.json file with your Firebase service account key.
 
 
 ## REST interface
@@ -107,9 +109,9 @@ This interfaces can be accessed on `https://<servername>:<port>/api/v1`. A Swagg
 ## Settings
 | Parameter | Data type (allowed value) | Description |
 | ----------- | ----------- | ----------- |
-| NPGSQLLOGMANAGER | `<bool>` (`True|False`) | Enables additional database logging. Logs are in spvchannels-db container and can be accessed with the command (docker logs spvchannels-db). By defaulte it's set to `False`. |
+| NPGSQLLOGMANAGER | `<bool>` (`True|False`) | Enables additional database logging. Logs are in spvchannels-db container and can be accessed with the command (docker logs spvchannels-db). By default it's set to `False`. |
 | HTTPSPORT | `<number>` | Port number on which SPV Channels API is running. By default it's set to `5010`. |
-| CERTIFICATEFILENAME | `<text>` | Fully qualified file name of the SSL server certificate (e.g. *<certificate_file_name.pfx>*) |
+| CERTIFICATEFILENAME | `<text>` | File name of the SSL server certificate (e.g. *<certificate_file_name.pfx>*) |
 | CERTIFICATESPASSWORD | `<text>` | Password of the *.pfx file |
 | NOTIFICATIONTEXTNEWMESSAGE | `<text>` | Notification text upon arrival of a new message. By default it's set to `New message arrived`. |
 | MAXMESSAGECONTENTLENGTH | `<number>` | Maximum size of any single message in bytes. By default it's set to its maximum size `65536`. |
@@ -128,7 +130,7 @@ This interfaces can be accessed on `https://<servername>:<port>/api/v1`. A Swagg
     cd spvchannels
     ```
 
-2. To shutdown SPV Channels Server containers you run the following command:
+2. To shutdown SPV Channels Server containers use the following command:
 
     ```
     docker-compose down
