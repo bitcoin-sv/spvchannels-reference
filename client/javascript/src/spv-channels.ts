@@ -163,7 +163,7 @@ export class ChannelsClient
      * @param token Token string.
      * @returns Token details.
      */
-    async getToken(channel: Channel, token: string): Promise<AccessToken>
+    async getToken(channel: Channel, token: string): Promise<AccessToken|null>
     {
         console.debug(`Calling listTokens to ${this.getServiceUrl()} for channel with id ${channel.id} using username ${this._username}`);
         
@@ -172,7 +172,7 @@ export class ChannelsClient
         if (resp.status != 200)
             throw new Error(`Error calling SPV channels API. Invalid status code received: ${resp.status.toString()}`); 
 
-        if (resp.data.length = 1)
+        if (resp.data.length === 1)
             return resp.data[0];
 
         return null;
@@ -470,7 +470,7 @@ export class MessagingClient
     /** 
      * Check that notifications are active.
      * 
-     * @returns True if notifications wesocket is open.
+     * @returns True if notifications websocket is open.
      */
     public notificationsActive() : boolean
     {
