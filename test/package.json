@@ -10,7 +10,7 @@
   },
   "dependencies": {
     "@types/node": "^14.0.20",
-    "axios": "^0.19.2",
+    "axios": "^0.21.1",
     "websocket": "^1.0.31"
   },
   "devDependencies": {
